@@ -22,12 +22,11 @@ package org.ayamemc.ayamepaperdoll.fabric;
 
 import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
-import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
-import org.ayamemc.ayamepaperdoll.config.ConfigScreen;
+import org.ayamemc.ayamepaperdoll.config.Configs;
 
 public class AyamePaperDollModMenuApiImpl implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return lastScreen -> new ConfigScreen(lastScreen, AyamePaperDoll.CONFIGS.getOptions());
+        return Configs::generateScreen;
     }
 }

@@ -24,13 +24,9 @@ import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.ResourceLocation;
 import org.ayamemc.ayamepaperdoll.config.Configs;
-import org.ayamemc.ayamepaperdoll.config.persistence.ConfigPersistence;
-import org.ayamemc.ayamepaperdoll.config.persistence.GsonConfigPersistence;
 import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.nio.file.Path;
 
 public final class AyamePaperDoll {
     public static final String MOD_ID = "ayame_paperdoll";
@@ -47,8 +43,7 @@ public final class AyamePaperDoll {
             InputConstants.UNKNOWN.getValue(),
             "key.%s.category".formatted(MOD_ID));
 
-    public static final Configs CONFIGS = new Configs();
-    public static final ConfigPersistence CONFIG_PERSISTENCE = new GsonConfigPersistence(Path.of("config/" + MOD_ID + "_v0.json"));
+    public static final Configs CONFIGS = Configs.getInstance();
 
     public static ResourceLocation path(String path) {
         return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
@@ -56,6 +51,6 @@ public final class AyamePaperDoll {
 
     public static void init() {
         // Write common init code here.
-        CONFIG_PERSISTENCE.load(AyamePaperDoll.CONFIGS.getOptions());
+
     }
 }

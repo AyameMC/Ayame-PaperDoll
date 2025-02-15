@@ -55,7 +55,8 @@ dependencies {
     modImplementation "net.fabricmc.fabric-api:fabric-api:$rootProject.fabric_api_version"
     // Fabric Mod Menu
     modImplementation("com.terraformersmc:modmenu:${project.modmenu_version}")
-
+    // YACL
+    modImplementation "dev.isxander:yet-another-config-lib:${project.yacl_version}-fabric"
     common(project(path: ':common', configuration: 'namedElements')) { transitive false }
     shadowBundle project(path: ':common', configuration: 'transformProductionFabric')
 }
@@ -75,7 +76,8 @@ processResources {
             fabric_loader_version         : project.findProperty('fabric_loader_version'),
             fabric_api_version            : project.findProperty("fabric_api_version"),
             fabric_minecraft_version_range: project.findProperty('fabric_minecraft_version_range'),
-            modmenu_version               : project.findProperty("modmenu_version")
+            modmenu_version               : project.findProperty("modmenu_version"),
+            yacl_version                  : project.findProperty("yacl_version")
     ]
 
     // 注册所有占位符为输入属性

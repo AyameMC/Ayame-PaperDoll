@@ -34,7 +34,7 @@ import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
-import org.ayamemc.ayamepaperdoll.config.ConfigScreen;
+import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
 
 @Mod(value = AyamePaperDoll.MOD_ID, dist = Dist.CLIENT)
@@ -52,7 +52,7 @@ public final class AyamePaperDollNeoForge {
 
         ModLoadingContext.get().registerExtensionPoint(
                 IConfigScreenFactory.class,
-                () -> (modContainer, lastScreen) -> new ConfigScreen(lastScreen, AyamePaperDoll.CONFIGS.getOptions())
+                () -> (modContainer, lastScreen) -> Configs.generateScreen(lastScreen)
         );
 
     }

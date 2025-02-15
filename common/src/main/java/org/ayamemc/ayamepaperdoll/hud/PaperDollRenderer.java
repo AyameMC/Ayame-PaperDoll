@@ -93,11 +93,11 @@ public class PaperDollRenderer {
 
     @SuppressWarnings("resource")
     private static int getLight(Entity entity, float tickDelta) {
-        if (CONFIGS.useWorldLight.getValue()) {
+        if (CONFIGS.useWorldLight) {
             Level world = entity.level();
             int blockLight = world.getBrightness(LightLayer.BLOCK, BlockPos.containing(entity.getEyePosition(tickDelta)));
             int skyLight = world.getBrightness(LightLayer.SKY, BlockPos.containing(entity.getEyePosition(tickDelta)));
-            int min = CONFIGS.worldLightMin.getValue();
+            int min = CONFIGS.worldLightMin;
             blockLight = Mth.clamp(blockLight, min, 15);
             skyLight = Mth.clamp(skyLight, min, 15);
             return LightTexture.pack(blockLight, skyLight);
@@ -111,7 +111,7 @@ public class PaperDollRenderer {
     }
 
     public static boolean shouldLockRotationYaw() {
-        final RotationMode rotationUnlock = CONFIGS.rotationMode.getValue();
+        final RotationMode rotationUnlock = CONFIGS.rotationMode;
         return (rotationUnlock == RotationMode.LOCK); //|| (rotationUnlock == RotationMode.SMOOTH_LOCK)*/;
 
     }
@@ -123,9 +123,9 @@ public class PaperDollRenderer {
      * Mimics the code in {@link InventoryScreen#renderEntityInInventory}
      */
     public void render(float partialTicks, GuiGraphics guiGraphics) {
-        if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll.getValue()) return;
-        LivingEntity targetEntity = minecraft.level.players().stream().filter(p -> p.getName().getString().equals(CONFIGS.playerName.getValue())).findFirst().orElse(minecraft.player);
-        if (CONFIGS.spectatorAutoSwitch.getValue() && minecraft.player.isSpectator()) {
+        if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll) return;
+        LivingEntity targetEntity = minecraft.level.players().stream().filter(p -> p.getName().getString().equals(CONFIGS.playerName)).findFirst().orElse(minecraft.player);
+        if (CONFIGS.spectatorAutoSwitch && minecraft.player.isSpectator()) {
             Entity cameraEntity = minecraft.getCameraEntity();
             if (cameraEntity instanceof LivingEntity livingEntity) {
                 targetEntity = livingEntity;
@@ -136,7 +136,7 @@ public class PaperDollRenderer {
 
         int scaledWidth = minecraft.getWindow().getGuiScaledWidth();
         int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
-        Configs.PoseOffsetMethod poseOffsetMethod = CONFIGS.poseOffsetMethod.getValue();
+        Configs.PoseOffsetMethod poseOffsetMethod = CONFIGS.poseOffsetMethod;
 
         var backup = new DataBackup<>(targetEntity, LIVINGENTITY_BACKUP_ENTRIES);
         backup.save();
@@ -144,7 +144,7 @@ public class PaperDollRenderer {
         transformEntity(targetEntity, partialTicks, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
 
         DataBackup<LivingEntity> vehicleBackup = null;
-        if (CONFIGS.renderVehicle.getValue() && poseOffsetMethod != Configs.PoseOffsetMethod.FORCE_STANDING && targetEntity.isPassenger()) {
+        if (CONFIGS.renderVehicle && poseOffsetMethod != Configs.PoseOffsetMethod.FORCE_STANDING && targetEntity.isPassenger()) {
             var vehicle = targetEntity.getVehicle();
             assert vehicle != null;
 
@@ -159,24 +159,24 @@ public class PaperDollRenderer {
             }
 
             performRendering(vehicle,
-                    CONFIGS.offsetX.getValue() * scaledWidth,
-                    CONFIGS.offsetY.getValue() * scaledHeight,
-                    CONFIGS.size.getValue() * scaledHeight,
-                    CONFIGS.mirrored.getValue(),
+                    CONFIGS.offsetX * scaledWidth,
+                    CONFIGS.offsetY * scaledHeight,
+                    CONFIGS.size * scaledHeight,
+                    CONFIGS.mirrored,
                     vehicle.getPosition(partialTicks).subtract(targetEntity.getPosition(partialTicks))
                             .yRot((float) Math.toRadians(yawLerped)).toVector3f(), // undo the rotation
-                    CONFIGS.lightDegree.getValue(),
+                    CONFIGS.lightDegree,
                     partialTicks, guiGraphics);
         }
 
 
         performRendering(targetEntity,
-                CONFIGS.offsetX.getValue() * scaledWidth,
-                CONFIGS.offsetY.getValue() * scaledHeight,
-                CONFIGS.size.getValue() * scaledHeight,
-                CONFIGS.mirrored.getValue(),
+                CONFIGS.offsetX * scaledWidth,
+                CONFIGS.offsetY * scaledHeight,
+                CONFIGS.size * scaledHeight,
+                CONFIGS.mirrored,
                 new Vector3f(0, (float) getPoseOffsetY(targetEntity, partialTicks, poseOffsetMethod), 0),
-                CONFIGS.lightDegree.getValue(),
+                CONFIGS.lightDegree,
                 partialTicks, guiGraphics);
 
         if (vehicleBackup != null) vehicleBackup.restore();
@@ -202,13 +202,13 @@ public class PaperDollRenderer {
             }
         } else if (poseOffsetMethod == Configs.PoseOffsetMethod.MANUAL) {
             if (targetEntity.isFallFlying()) {
-                return CONFIGS.elytraOffsetY.getValue() * getFallFlyingLeaning(targetEntity, partialTicks);
+                return CONFIGS.elytraOffsetY * getFallFlyingLeaning(targetEntity, partialTicks);
             } else if ((targetEntity.isVisuallySwimming()) && targetEntity.getSwimAmount(partialTicks) > 0 || targetEntity.isAutoSpinAttack()) { // require nonzero leaning to filter out glitch
-                return CONFIGS.swimCrawlOffsetY.getValue();
+                return CONFIGS.swimCrawlOffsetY;
             } else if (!targetEntity.isVisuallySwimming() && targetEntity.getSwimAmount(partialTicks) > 0) { // for swimming/crawling pose, only smooth the falling edge
-                return CONFIGS.swimCrawlOffsetY.getValue() * targetEntity.getSwimAmount(partialTicks);
+                return CONFIGS.swimCrawlOffsetY * targetEntity.getSwimAmount(partialTicks);
             } else if (targetEntity.isCrouching()) {
-                return CONFIGS.sneakOffsetY.getValue();
+                return CONFIGS.sneakOffsetY;
             }
         }
         return 0;
@@ -235,15 +235,15 @@ public class PaperDollRenderer {
 
         // FIXME: NEVERFIX - glitch when the mouse moves too fast, caused by lerping a warped value, it is possibly wrapped in LivingEntity#tick or LivingEntity#turnHead
         final float headLerp = Mth.lerp(partialTicks, targetEntity.yHeadRotO, targetEntity.yHeadRot);
-        final double headYaw = CONFIGS.headYaw.getValue(), headYawRange = CONFIGS.headYawRange.getValue();
-        final double bodyYaw = CONFIGS.bodyYaw.getValue(), bodyYawRange = CONFIGS.bodyYawRange.getValue();
-        final double pitch = CONFIGS.pitch.getValue(), pitchRange = CONFIGS.pitchRange.getValue();
+        final double headYaw = CONFIGS.headYaw, headYawRange = CONFIGS.headYawRange;
+        final double bodyYaw = CONFIGS.bodyYaw, bodyYawRange = CONFIGS.bodyYawRange;
+        final double pitch = CONFIGS.pitch, pitchRange = CONFIGS.pitchRange;
         final float headClamp = (float) Mth.clamp(headLerp, headYaw - headYawRange, headYaw + headYawRange);
         final float bodyLerp = Mth.lerp(partialTicks, targetEntity.yBodyRotO, targetEntity.yBodyRot);
         final float diff = headLerp - bodyLerp;
         final float bodyClamp = (float) Mth.clamp(Mth.wrapDegrees(headClamp - diff), bodyYaw - bodyYawRange, bodyYaw + bodyYawRange);
         final float pitchClamp = (float) (Mth.clamp(Mth.lerp(partialTicks, targetEntity.xRotO, targetEntity.getXRot()), -pitchRange, pitchRange) + pitch);
-        final RotationMode rotationMode = CONFIGS.rotationMode.getValue();
+        final RotationMode rotationMode = CONFIGS.rotationMode;
 
         // 头部锁定
         if (rotationMode == RotationMode.LOCK) {
@@ -258,12 +258,12 @@ public class PaperDollRenderer {
         targetEntity.setXRot(targetEntity.xRotO = pitchClamp);
 
 
-        if (!CONFIGS.swingHands.getValue()) {
+        if (!CONFIGS.swingHands) {
             targetEntity.attackAnim = 0;
             targetEntity.oAttackAnim = 0;
         }
 
-        if (!CONFIGS.hurtFlash.getValue()) {
+        if (!CONFIGS.hurtFlash) {
             targetEntity.hurtTime = 0;
         }
 
@@ -288,18 +288,18 @@ public class PaperDollRenderer {
         poseStack.scale((float) size, (float) size, (float) size);
         Quaternionf zRot = new Quaternionf().rotateZ((float) Math.PI);
 
-        final RotationMode rotationMode = CONFIGS.rotationMode.getValue();
+        final RotationMode rotationMode = CONFIGS.rotationMode;
 
         Quaternionf xyzRot = /*(rotationMode == RotationMode.SMOOTH_LOCK) ?
                 new Quaternionf().rotateXYZ(
-                        (float) Math.toRadians(CONFIGS.rotationX.getValue()),
-                        (float) ((targetEntity.getYRot() + CONFIGS.rotationY.getValue() - 180) * ((float) Math.PI / 180F)),
-                        (float) Math.toRadians(CONFIGS.rotationZ.getValue()))
+                        (float) Math.toRadians(CONFIGS.rotationX),
+                        (float) ((targetEntity.getYRot() + CONFIGS.rotationY - 180) * ((float) Math.PI / 180F)),
+                        (float) Math.toRadians(CONFIGS.rotationZ))
                 :*/
                 new Quaternionf().rotateXYZ(
-                        (float) Math.toRadians(CONFIGS.rotationX.getValue()),
-                        (float) Math.toRadians(CONFIGS.rotationY.getValue()),
-                        (float) Math.toRadians(CONFIGS.rotationZ.getValue()));
+                        (float) Math.toRadians(CONFIGS.rotationX),
+                        (float) Math.toRadians(CONFIGS.rotationY),
+                        (float) Math.toRadians(CONFIGS.rotationZ));
 
         zRot.mul(xyzRot);
         poseStack.mulPose(zRot);

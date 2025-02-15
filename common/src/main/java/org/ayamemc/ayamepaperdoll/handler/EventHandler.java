@@ -27,7 +27,7 @@ import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
-import org.ayamemc.ayamepaperdoll.config.ConfigScreen;
+import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.VisualConfigEditorScreen;
 import org.ayamemc.ayamepaperdoll.hud.PaperDollRenderer;
 
@@ -44,12 +44,12 @@ public class EventHandler {
         final Pose playerPose = player.getPose();
         if (
                 !minecraft.options.hideGui &&
-                        !(CONFIGS.hideUnderDebug.getValue() && minecraft.getDebugOverlay().showDebugScreen()) &&
-                        (minecraft.screen == null || !CONFIGS.hideOnScreenOpen.getValue()) &&
-                        !(minecraft.screen instanceof ConfigScreen) &&
+                        !(CONFIGS.hideUnderDebug && minecraft.getDebugOverlay().showDebugScreen()) &&
+                        (minecraft.screen == null || !CONFIGS.hideOnScreenOpen) &&
+                        !(Configs.isConfigScreen(minecraft.screen)) &&
                         !(minecraft.screen instanceof VisualConfigEditorScreen) &&
-                        (!(CONFIGS.visibleDuringActivity.getValue()) ||
-                                (CONFIGS.visibleDuringActivity.getValue() && hasActivity(player, playerPose)))
+                        (!(CONFIGS.visibleDuringActivity) ||
+                                (CONFIGS.visibleDuringActivity && hasActivity(player, playerPose)))
 
 
         ) {
@@ -91,10 +91,10 @@ public class EventHandler {
 
     public static void keyPressed() {
         while (AyamePaperDoll.SHOW_PAPERDOLL_KEY.consumeClick()) {
-            CONFIGS.displayPaperDoll.setValue(!CONFIGS.displayPaperDoll.getValue());
+            CONFIGS.displayPaperDoll = !CONFIGS.displayPaperDoll;
         }
         while (AyamePaperDoll.OPEN_CONFIG_GUI.consumeClick()) {
-            minecraft.setScreen(new ConfigScreen(lastScreen, AyamePaperDoll.CONFIGS.getOptions()));
+            minecraft.setScreen(Configs.generateScreen(lastScreen));
         }
     }
 }

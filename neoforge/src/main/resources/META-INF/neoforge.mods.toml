@@ -37,5 +37,12 @@ versionRange = "${neoforge_minecraft_version_range}"
 ordering = "NONE"
 side = "CLIENT"
 
+[[dependencies.${ mod_id }]]
+modId = "yet_another_config_lib_v3"
+type = "required"
+versionRange = "[${yacl_version}-neoforge,)"
+ordering = "NONE"
+side = "CLIENT"
+
 [[mixins]]
 config = "${mod_mixin_config}"
