@@ -57,7 +57,7 @@ public final class AyamePaperDollNeoForge {
 
     }
 
-    private static void renderPaperDoll(RenderGuiEvent.Post event) {
+    private static void renderPaperDoll(RenderGuiEvent.Pre event) {
         final GuiGraphics guiGraphics = event.getGuiGraphics();
         final DeltaTracker partialTick = event.getPartialTick();
         EventHandler.renderPaperDoll(guiGraphics, partialTick);

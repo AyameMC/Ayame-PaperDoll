@@ -73,7 +73,9 @@ processResources {
             mod_issues_url                : project.findProperty('mod_issues_url'),
             mod_fabric_sources_url        : project.findProperty('mod_fabric_sources_url'),
             fabric_loader_version         : project.findProperty('fabric_loader_version'),
-            fabric_minecraft_version_range: project.findProperty('fabric_minecraft_version_range')
+            fabric_api_version            : project.findProperty("fabric_api_version"),
+            fabric_minecraft_version_range: project.findProperty('fabric_minecraft_version_range'),
+            modmenu_version               : project.findProperty("modmenu_version")
     ]
 
     // 注册所有占位符为输入属性

@@ -39,7 +39,7 @@ public class EventHandler {
     public static Screen lastScreen;
 
     @SuppressWarnings("DataFlowIssue")
-    public static void renderPaperDoll(GuiGraphics guiGraphics, DeltaTracker partialTick) {
+    public static void renderPaperDoll(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         final Player player = minecraft.player;
         final Pose playerPose = player.getPose();
         if (
@@ -53,7 +53,7 @@ public class EventHandler {
 
 
         ) {
-            paperDollRenderer.render(partialTick.getGameTimeDeltaPartialTick(true), guiGraphics);
+            paperDollRenderer.render(deltaTracker.getGameTimeDeltaPartialTick(true), guiGraphics);
         }
     }
 
