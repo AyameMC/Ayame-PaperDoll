@@ -45,8 +45,9 @@ public class Configs {
     public static Screen generateScreen(Screen lastScreen) {
         return HANDLER.generateGui().generateScreen(lastScreen);
     }
+
     public static boolean isConfigScreen(Screen screen) {
-        return screen != null && screen.getTitle().equals(Component.translatable("yacl3.config." + AyamePaperDoll.MOD_ID + ":config.title"));
+        return screen != null && screen.getTitle().equals(Component.translatable("yacl3.config." + MOD_ID + ":config.title"));
     }
 
     public static boolean load() {
@@ -66,11 +67,18 @@ public class Configs {
     public static final String POSTURES_CATEGORY = "postures";
     public static final String DETAILS_CATEGORY = "details";
     public static final String HIDDEN_CATEGORY = "hidden";
+
     //    public final SimpleOption<Boolean> displayPaperDoll = new SimpleOption<>(GENERAL_CATEGORY, AyamePaperDoll.path("display_paperdoll"), true);
     @SerialEntry()
     @AutoGen(category = GENERAL_CATEGORY)
     @Boolean
     public boolean displayPaperDoll = true;
+
+    @SerialEntry
+    @AutoGen(category = GENERAL_CATEGORY)
+    @Label
+    public Component presetsLabel = Component.translatable("yacl3.config.ayame_paperdoll:label.presets");
+
     //    public final SimpleOption<RotationMode> rotationMode = new SimpleOption<>(GENERAL_CATEGORY, AyamePaperDoll.path("rotation_mode"), RotationMode.LOCK);
     @SerialEntry
     @AutoGen(category = GENERAL_CATEGORY)
