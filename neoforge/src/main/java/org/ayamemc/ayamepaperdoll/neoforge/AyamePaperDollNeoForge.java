@@ -52,7 +52,7 @@ public final class AyamePaperDollNeoForge {
 
         ModLoadingContext.get().registerExtensionPoint(
                 IConfigScreenFactory.class,
-                () -> (modContainer, lastScreen) -> Configs.generateScreen(lastScreen)
+                () -> (modContainer, lastScreen) -> Configs.makeScreen(lastScreen)
         );
 
     }

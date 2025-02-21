@@ -27,6 +27,6 @@ import org.ayamemc.ayamepaperdoll.config.Configs;
 public class AyamePaperDollModMenuApiImpl implements ModMenuApi {
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return Configs::generateScreen;
+        return Configs::makeScreen;
     }
 }
