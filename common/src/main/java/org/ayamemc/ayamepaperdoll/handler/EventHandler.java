@@ -94,7 +94,7 @@ public class EventHandler {
             CONFIGS.displayPaperDoll = !CONFIGS.displayPaperDoll;
         }
         while (AyamePaperDoll.OPEN_CONFIG_GUI.consumeClick()) {
-            minecraft.setScreen(Configs.makeScreen(lastScreen));
+            minecraft.setScreen(Configs.generateScreen(lastScreen));
         }
     }
 }
