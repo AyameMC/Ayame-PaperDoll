@@ -62,34 +62,34 @@ public class VisualConfigEditorScreen extends Screen {
     @Override
     public void onClose() {
         // 通过构造新配置屏幕刷新设置中的值
-        this.minecraft.setScreen(lastScreen);
-//        if (Configs.isConfigScreen(lastScreen)) {
-//            lastScreen.onClose();
-//            this.minecraft.setScreen(new ConfigScreen(lastScreen, CONFIGS.getOptions()));
-//        } else {
-//            this.minecraft.setScreen(lastScreen);
-//        }
+
+        if (lastScreen instanceof ConfigScreen configScreen) {
+            configScreen.onClose();
+            this.minecraft.setScreen(new ConfigScreen(lastScreen, CONFIGS.getOptions()));
+        } else {
+            this.minecraft.setScreen(lastScreen);
+        }
     }
 
     @Override
     public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
         boolean onDrag = false;
         if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
-            final double newOffsetX = CONFIGS.offsetX + (deltaX * 0.0015);
-            final double newOffsetY = CONFIGS.offsetY + (deltaY * 0.0015);
-//            if (newOffsetX < CONFIGS.offsetX.getMax() && newOffsetY > CONFIGS.offsetY.getMin()) {
-            CONFIGS.offsetX = newOffsetX;
-//            }
-//            if (newOffsetY < CONFIGS.offsetY.getMax() && newOffsetX > CONFIGS.offsetX.getMin()) {
-            CONFIGS.offsetY = newOffsetY;
-//            }
+            final double newOffsetX = CONFIGS.offsetX.getValue() + (deltaX * 0.0015);
+            final double newOffsetY = CONFIGS.offsetY.getValue() + (deltaY * 0.0015);
+            if (newOffsetX < CONFIGS.offsetX.getMax() && newOffsetY > CONFIGS.offsetY.getMin()) {
+                CONFIGS.offsetX.setValue(newOffsetX);
+            }
+            if (newOffsetY < CONFIGS.offsetY.getMax() && newOffsetX > CONFIGS.offsetX.getMin()) {
+                CONFIGS.offsetY.setValue(newOffsetY);
+            }
             onDrag = true;
         }
         if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
-            final double newRotationY = CONFIGS.rotationY + deltaX;
-//            if (newRotationY < CONFIGS.rotationY.getMax() && newRotationY > CONFIGS.rotationY.getMin()) {
-            CONFIGS.rotationY = newRotationY;
-//            }
+            final double newRotationY = CONFIGS.rotationY.getValue() + deltaX;
+            if (newRotationY < CONFIGS.rotationY.getMax() && newRotationY > CONFIGS.rotationY.getMin()) {
+                CONFIGS.rotationY.setValue(newRotationY);
+            }
             onDrag = true;
         }
         return onDrag;
@@ -98,10 +98,10 @@ public class VisualConfigEditorScreen extends Screen {
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double scrollX, double scrollY) {
         if (scrollY != 0) {
-            final double newSize = CONFIGS.size + (scrollY / 80);
-//            if (newSize < CONFIGS.size.getMax() && newSize > CONFIGS.size.getMin()) {
-                CONFIGS.size = newSize;
-//            }
+            final double newSize = CONFIGS.size.getValue() + (scrollY / 80);
+            if (newSize < CONFIGS.size.getMax() && newSize > CONFIGS.size.getMin()) {
+                CONFIGS.size.setValue(newSize);
+            }
             return true;
         }
         return false;

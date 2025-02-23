@@ -66,12 +66,6 @@ subprojects {
             name = "Terraformers"
             url = "https://maven.terraformersmc.com/"
         }
-
-        // Yacl
-        maven {
-            name = "Xander Maven"
-            url = "https://maven.isxander.dev/releases"
-        }
     }
 
     loom {
