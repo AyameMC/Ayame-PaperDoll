@@ -21,6 +21,7 @@
 package org.ayamemc.ayamepaperdoll.config;
 
 import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
 import dev.isxander.yacl3.config.v2.api.SerialEntry;
@@ -62,22 +63,67 @@ public class Configs {
                                 .controller(TickBoxControllerBuilder::create)
                                 .build()
                         )
-                        .group(OptionGroup.createBuilder()
-                                .name(Component.translatable("config.ayame_paperdoll.option.presets"))
-                                .option(
-                                        ButtonOption.createBuilder()
-                                                .name(Component.translatable("config.ayame_paperdoll.presets.top_left"))
-                                                .action((yaclScreen, thisOption) -> {
-                                                    CONFIGS.offsetX = 0.08;
-                                                    CONFIGS.offsetY = 0.23;
-                                                    CONFIGS.rotationX = -4.96;
-                                                    CONFIGS.rotationY = -4.96;
-                                                    CONFIGS.rotationZ = 0D;
-                                                    CONFIGS.size = 0.1;
-                                                    CONFIGS.mirrored = true;
-                                                }).build()
-                                ).build()
+
+                        .option(LabelOption.create(Component.literal("预设")))
+
+                        .name(Component.translatable("config.ayame_paperdoll.option.presets"))
+                        .option(
+                                ButtonOption.createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.presets.top_left"))
+                                        .text(Component.empty())
+                                        .action((yaclScreen, thisOption) -> {
+                                            CONFIGS.offsetX = 0.08;
+                                            CONFIGS.offsetY = 0.23;
+                                            CONFIGS.rotationX = -4.96;
+                                            CONFIGS.rotationY = -4.96;
+                                            CONFIGS.rotationZ = 0D;
+                                            CONFIGS.size = 0.1;
+                                            CONFIGS.mirrored = true;
+                                        }).build()
                         )
+                        .option(
+                                ButtonOption.createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.presets.top_right"))
+                                        .text(Component.empty())
+                                        .action((yaclScreen, thisOption) -> {
+                                            CONFIGS.offsetX = 0.91;
+                                            CONFIGS.offsetY = 0.23;
+                                            CONFIGS.rotationX = -4.96;
+                                            CONFIGS.rotationY = -4.96;
+                                            CONFIGS.rotationZ = 0D;
+                                            CONFIGS.size = 0.1;
+                                            CONFIGS.mirrored = false;
+                                        }).build()
+                        )
+                        .option(
+                                ButtonOption.createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.presets.bottom_left"))
+                                        .text(Component.empty())
+                                        .action((yaclScreen, thisOption) -> {
+                                            CONFIGS.offsetX = 0.14;
+                                            CONFIGS.offsetY = 1.27;
+                                            CONFIGS.rotationX = 0D;
+                                            CONFIGS.rotationY = 0D;
+                                            CONFIGS.rotationZ = 0D;
+                                            CONFIGS.size = 0.29;
+                                            CONFIGS.mirrored = true;
+                                        }).build()
+                        )
+                        .option(
+                                ButtonOption.createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.presets.bottom_right"))
+                                        .text(Component.empty())
+                                        .action((yaclScreen, thisOption) -> {
+                                            CONFIGS.offsetX = 0.85;
+                                            CONFIGS.offsetY = 1.27;
+                                            CONFIGS.rotationX = 0D;
+                                            CONFIGS.rotationY = 0D;
+                                            CONFIGS.rotationZ = 0D;
+                                            CONFIGS.size = 0.29;
+                                            CONFIGS.mirrored = false;
+                                        }).build()
+                        )
+
                         .option(
                                 ButtonOption.createBuilder()
                                         .name(Component.translatable("config.ayame_paperdoll.button.visual_config_editor"))
@@ -85,11 +131,19 @@ public class Configs {
                                             MINECRAFT.setScreen(new VisualConfigEditorScreen(lastScreen));
                                         })
                                         .available(isInLevel)
-                                        .description(isInLevel ? OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.visual_config_editor.desc")) : OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.visual_config_editor_not_available.desc")))
-
+                                        .description(OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.visual_config_editor.desc")))
                                         .build()
                         )
-                        .build())
+                        .option(
+                                Option.<RotationMode>createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.option.rotation_mode"))
+                                        .description(OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.rotation_mode.desc")))
+                                        .binding(RotationMode.LOCK, () -> this.rotationMode, (newVal) -> this.rotationMode = newVal)
+                                        .controller((rotationModeOption -> EnumControllerBuilder.create(rotationModeOption).enumClass(RotationMode.class)))
+                                        .build()
+                        ).build()
+
+                )
                 .category(ConfigCategory.createBuilder()
                         .name(Component.translatable("config.ayame_paperdoll.category.rotations")
                         ).build()
@@ -101,8 +155,7 @@ public class Configs {
                 .category(ConfigCategory.createBuilder()
                         .name(Component.translatable("config.ayame_paperdoll.category.details")
                         ).build()
-                )
-                .build();
+                ).build();
 
     }
 
@@ -295,49 +348,21 @@ public class Configs {
 //    @AutoGen(category = DETAILS_CATEGORY)
 //    @StringField
     public String playerName = "";
-//    public final SimpleOption<Integer> lastConfigTabIdx = new SimpleOption<>(HIDDEN_CATEGORY, AyamePaperDoll.path("last_config_tab_idx"), 0);
-//    public final Presets topLeft = new Presets.PresetsBuilder()
-//            .with(offsetX, 0.08)
-//            .with(offsetY, 0.23)
-//            .with(rotationX, -4.96)
-//            .with(rotationY, -4.96)
-//            .with(rotationZ, 0D)
-//            .with(size, 0.1)
-//            .with(mirrored, true)
-//            .build();
-//    public final Presets topRight = new Presets.PresetsBuilder()
-//            .with(offsetX, 0.91)
-//            .with(offsetY, 0.23)
-//            .with(rotationX, -4.96)
-//            .with(rotationY, -4.96)
-//            .with(rotationZ, 0D)
-//            .with(size, 0.1)
-//            .with(mirrored, false)
-//            .build();
-//    public final Presets bottomLeft = new Presets.PresetsBuilder()
-//            .with(offsetX, 0.14)
-//            .with(offsetY, 1.27)
-//            .with(rotationX, 0D)
-//            .with(rotationY, 0D)
-//            .with(rotationZ, 0D)
-//            .with(size, 0.29)
-//            .with(mirrored, true)
-//            .build();
-//    public final Presets bottomRight = new Presets.PresetsBuilder()
-//            .with(offsetX, 0.85)
-//            .with(offsetY, 1.27)
-//            .with(rotationX, 0D)
-//            .with(rotationY, 0D)
-//            .with(rotationZ, 0D)
-//            .with(size, 0.29)
-//            .with(mirrored, false)
-//            .build();
+
+    public interface NamedEnum extends NameableEnum {
+        String name();
+
+        @Override
+        default Component getDisplayName() {
+            return Component.translatable("config.ayame_paperdoll.enum.RotationMode." + name());
+        }
+    }
 
     public enum PoseOffsetMethod {
         AUTO, MANUAL, FORCE_STANDING, DISABLED
     }
 
-    public enum RotationMode {
+    public enum RotationMode implements NamedEnum {
         UNLOCK, LOCK
     }
 
