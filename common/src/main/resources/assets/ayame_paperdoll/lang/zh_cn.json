@@ -13,7 +13,7 @@
   "yacl3.config.ayame_paperdoll:presets.bottom_right": "右下",
   "yacl3.config.ayame_paperdoll:config.category.general": "常规",
   "yacl3.config.ayame_paperdoll:config.displayPaperDoll": "显示纸娃娃",
-  "yacl3.config.ayame_paperdoll:label.presets": "预设",
+  "yacl3.config.ayame_paperdoll:config.presets": "预设",
   "yacl3.config.ayame_paperdoll:button.visualConfig_editor": "可视化配置编辑器",
   "yacl3.config.ayame_paperdoll:config.offsetX": "X轴偏移",
   "yacl3.config.ayame_paperdoll:config.offsetY": "Y轴偏移",
