@@ -21,6 +21,7 @@
 package org.ayamemc.ayamepaperdoll.config;
 
 import dev.isxander.yacl3.api.*;
+import dev.isxander.yacl3.api.controller.DoubleSliderControllerBuilder;
 import dev.isxander.yacl3.api.controller.EnumControllerBuilder;
 import dev.isxander.yacl3.api.controller.TickBoxControllerBuilder;
 import dev.isxander.yacl3.config.v2.api.ConfigClassHandler;
@@ -64,9 +65,20 @@ public class Configs {
                                 .build()
                         )
 
-                        .option(LabelOption.create(Component.literal("预设")))
+                        .option(LabelOption.create(Component.empty()))
+                        .option(
+                                ButtonOption.createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.button.visual_config_editor"))
+                                        .action((yaclScreen, thisOption) -> {
+                                            MINECRAFT.setScreen(new VisualConfigEditorScreen(lastScreen));
+                                        })
+                                        .available(isInLevel)
+                                        .description(OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.visual_config_editor.desc")))
+                                        .build()
+                        )
 
-                        .name(Component.translatable("config.ayame_paperdoll.option.presets"))
+                        .option(LabelOption.create(Component.translatable("config.ayame_paperdoll.option.presets")))
+
                         .option(
                                 ButtonOption.createBuilder()
                                         .name(Component.translatable("config.ayame_paperdoll.presets.top_left"))
@@ -123,24 +135,26 @@ public class Configs {
                                             CONFIGS.mirrored = false;
                                         }).build()
                         )
+                        .option(LabelOption.create(Component.empty()))
 
-                        .option(
-                                ButtonOption.createBuilder()
-                                        .name(Component.translatable("config.ayame_paperdoll.button.visual_config_editor"))
-                                        .action((yaclScreen, thisOption) -> {
-                                            MINECRAFT.setScreen(new VisualConfigEditorScreen(lastScreen));
-                                        })
-                                        .available(isInLevel)
-                                        .description(OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.visual_config_editor.desc")))
-                                        .build()
-                        )
                         .option(
                                 Option.<RotationMode>createBuilder()
                                         .name(Component.translatable("config.ayame_paperdoll.option.rotation_mode"))
                                         .description(OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.rotation_mode.desc")))
                                         .binding(RotationMode.LOCK, () -> this.rotationMode, (newVal) -> this.rotationMode = newVal)
-                                        .controller((rotationModeOption -> EnumControllerBuilder.create(rotationModeOption).enumClass(RotationMode.class)))
+                                        .controller(rotationModeOption -> EnumControllerBuilder.create(rotationModeOption).enumClass(RotationMode.class))
                                         .build()
+                        )
+                        .option(
+                                Option.<Double>createBuilder()
+                                        .name(Component.translatable("config.ayame_paperdoll.option.offset_x"))
+                                        .description(OptionDescription.of(Component.translatable("config.ayame_paperdoll.option.offset_x.desc")))
+                                        .binding(CONFIGS.offsetX, () -> CONFIGS.offsetX, (newVal) -> this.offsetX = newVal)
+                                        .controller(offsetXOption -> DoubleSliderControllerBuilder.create(offsetXOption)
+                                                .range(-0.5, 1.5)
+                                                .step(0.01)
+                                        ).build()
+
                         ).build()
 
                 )
