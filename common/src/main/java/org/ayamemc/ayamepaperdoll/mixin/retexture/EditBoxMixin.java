@@ -22,7 +22,6 @@ package org.ayamemc.ayamepaperdoll.mixin.retexture;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
@@ -49,8 +48,8 @@ public abstract class EditBoxMixin extends AbstractWidget {
         if (this instanceof Retextured retextured) {
             int color = ARGB.white(this.alpha);
 
-            RenderSystem.enableBlend();
-            RenderSystem.enableDepthTest();
+//            RenderSystem.enableBlend();
+//            RenderSystem.enableDepthTest();
 
             instance.blitSprite(function, retextured.retexture(resourceLocation), i, j, k, l, color);
         } else {
