@@ -22,13 +22,19 @@ package org.ayamemc.ayamepaperdoll.mixin.patch;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.systems.RenderPass;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.MultiBufferSource;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.client.renderer.RenderType;
 import org.ayamemc.ayamepaperdoll.mixininterface.BufferSourceMixinInterface;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+
+import java.util.OptionalInt;
 
 @Mixin(MultiBufferSource.BufferSource.class)
 public abstract class BufferSourceMixin implements BufferSourceMixinInterface {
@@ -42,16 +48,21 @@ public abstract class BufferSourceMixin implements BufferSourceMixinInterface {
     }
 
 
-
     // strangely, WrapMethod has no effect
     @WrapOperation(method = "endBatch(Lnet/minecraft/client/renderer/RenderType;)V",
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;endBatch(Lnet/minecraft/client/renderer/RenderType;Lcom/mojang/blaze3d/vertex/BufferBuilder;)V"))
-    void disableCulling(MultiBufferSource.BufferSource instance, RenderType layer, BufferBuilder builder, Operation<Void> original) {
+    void disableCulling(MultiBufferSource.BufferSource instance, RenderType renderType, BufferBuilder builder, Operation<Void> original) {
         if (this.ayame_PaperDoll$forceDisableCulling) {
+            try (RenderPass pass = RenderSystem.getDevice().createCommandEncoder().createRenderPass(Minecraft.getInstance(). getMainRenderTarget().getColorTexture(), OptionalInt.empty())) {
+                // Setup things here
+                pass.setPipeline(RenderPipelines.ENTITY_CUTOUT_NO_CULL);
+
+            }
+            original.call(instance, renderType, builder);
+
             // TODO:修复剔除bug
-            original.call(instance, layer, builder);
         } else {
-            original.call(instance, layer, builder);
+            original.call(instance, renderType, builder);
         }
     }
 }
