@@ -318,8 +318,7 @@ public class PaperDollRenderer {
         MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
 
         // TODO: 修复矿车锁定旋转时不被锁定的问题
-        guiGraphics.drawSpecial(multiBufferSource ->
-                entityRenderDispatcher.render(targetEntity, offset.x, offset.y, offset.z, partialTicks, poseStack, bufferSource, getLight(targetEntity, partialTicks)));
+        guiGraphics.drawSpecial(multiBufferSource -> entityRenderDispatcher.render(targetEntity, offset.x, offset.y, offset.z, partialTicks, poseStack, bufferSource, getLight(targetEntity, partialTicks)));
 
         // 事实证明1.21.3+只需一直禁用剔除，镜像也不会导致什么问题
         bufferSource.ayame_PaperDoll$setForceDisableCulling(true);

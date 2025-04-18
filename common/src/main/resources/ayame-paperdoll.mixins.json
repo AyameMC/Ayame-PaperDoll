@@ -5,7 +5,6 @@
   "minVersion": "0.8",
   "client": [
     "patch.AbstractBoatRendererMixin",
-    "patch.BufferSourceMixin",
     "retexture.AbstractButtonMixin",
     "retexture.AbstractScrollAreaMixin",
     "retexture.AbstractSliderButtonMixin",
