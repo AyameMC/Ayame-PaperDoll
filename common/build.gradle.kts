@@ -19,15 +19,16 @@
  */
 
 architectury {
-    common rootProject.enabled_platforms.split(',')
+    common(rootProject.property("enabled_platforms").toString().split(','))
 }
 
 dependencies {
     // We depend on Fabric Loader here to use the Fabric @Environment annotations,
     // which get remapped to the correct annotations on each platform.
     // Do NOT use other classes from Fabric Loader.
-    modImplementation "net.fabricmc:fabric-loader:$rootProject.fabric_loader_version"
+    modImplementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
 }
 loom {
-    accessWidenerPath = file("src/main/resources/${mod_access_widener_name}")
+    accessWidenerPath = file("src/main/resources/${rootProject.property("mod_access_widener_name")}")
 }
+

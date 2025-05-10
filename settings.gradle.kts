@@ -20,15 +20,15 @@
 
 pluginManagement {
     repositories {
-        maven { url "https://maven.fabricmc.net/" }
-        maven { url "https://maven.architectury.dev/" }
-        maven { url "https://files.minecraftforge.net/maven/" }
+        maven { url = uri("https://maven.fabricmc.net/") }
+        maven { url = uri("https://maven.architectury.dev/") }
+        maven { url = uri("https://files.minecraftforge.net/maven/") }
         gradlePluginPortal()
     }
 }
 
-rootProject.name = 'Ayame-PaperDoll'
+rootProject.name = "Ayame-PaperDoll"
 
-include 'common'
-include 'fabric'
-include 'neoforge'
+include("common")
+include("fabric")
+include("neoforge")
