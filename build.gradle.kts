@@ -34,11 +34,10 @@ allprojects {
 }
 
 subprojects {
-    apply {
-        plugin("dev.architectury.loom")
-        plugin("com.github.johnrengelman.shadow")
-        plugin("maven-publish")
-    }
+    apply(plugin = "dev.architectury.loom")
+    apply(plugin = "com.github.johnrengelman.shadow")
+    apply(plugin = "maven-publish")
+
     base {
         archivesName = "${rootProject.findProperty("mod_archives_name")}-${project.name}"
     }
