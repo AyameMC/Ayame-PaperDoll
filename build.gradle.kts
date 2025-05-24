@@ -55,7 +55,6 @@ allprojects {
 
 subprojects {
     apply(plugin = "dev.architectury.loom")
-    apply(plugin = "com.github.johnrengelman.shadow")
     apply(plugin = "maven-publish")
 
     base {
