@@ -1,3 +1,4 @@
+
 import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
@@ -7,6 +8,7 @@ plugins {
 architectury {
     platformSetupLoomIde()
     fabric()
+
 }
 
 loom {
@@ -90,7 +92,7 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
 tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
     dependsOn("shadowJar")
     val shadowJarTask = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar")
-    input.set(shadowJarTask.flatMap { it.archiveFile })
+    inputFile.set(shadowJarTask.get().archiveFile)
     injectAccessWidener.set(true)
 }
 
