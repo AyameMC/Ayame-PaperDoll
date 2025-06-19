@@ -18,9 +18,8 @@
  *     along with Ayame PaperDoll.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayamemc.ayamepaperdoll.mixininterface;
+package org.ayamemc.ayamepaperdoll.util;
 
-public interface BufferSourceMixinInterface {
-    default void ayame_PaperDoll$setForceDisableCulling(boolean disableCulling) {
-    }
+public class DisableCullFlag {
+    public static final ThreadLocal<Boolean> forceDisableCull = ThreadLocal.withInitial(() -> false);
 }

@@ -32,6 +32,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -44,6 +45,7 @@ import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.Configs.RotationMode;
 import org.ayamemc.ayamepaperdoll.hud.DataBackup.DataBackupEntry;
+import org.ayamemc.ayamepaperdoll.util.DisableCullFlag;
 import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -119,6 +121,7 @@ public class PaperDollRenderer {
     // 这会导致织布机渲染问题，不要使用↓
     // follow convention in LayeredDrawer#renderInternal
     // guiGraphics.pose().translate(0, 0, 200);
+
     /**
      * Mimics the code in {@link InventoryScreen#renderEntityInInventory}
      */
@@ -316,12 +319,17 @@ public class PaperDollRenderer {
         entityRenderDispatcher.setRenderHitBoxes(false);
         entityRenderDispatcher.setRenderShadow(false);
         MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
-
         // TODO: 修复矿车锁定旋转时不被锁定的问题
-        guiGraphics.drawSpecial(multiBufferSource -> entityRenderDispatcher.render(targetEntity, offset.x, offset.y, offset.z, partialTicks, poseStack, bufferSource, getLight(targetEntity, partialTicks)));
+        DisableCullFlag.forceDisableCull.set(true);
+        try {
+            guiGraphics.drawSpecial(multiBufferSource ->
+                    entityRenderDispatcher.render(targetEntity, offset.x, offset.y, offset.z, partialTicks, poseStack, bufferSource, getLight(targetEntity, partialTicks)));
+        } finally {
+            DisableCullFlag.forceDisableCull.set(false);
+        }
 
         // 事实证明1.21.3+只需一直禁用剔除，镜像也不会导致什么问题
-        bufferSource.ayame_PaperDoll$setForceDisableCulling(true);
+//        bufferSource.ayame_PaperDoll$setForceDisableCulling(true);
         bufferSource.endBatch();
 
         // do not need to restore this value in fact
@@ -339,6 +347,6 @@ public class PaperDollRenderer {
     public interface LockedPaperDoll {
     }
 
-    public static class PaperDollPoseStack extends PoseStack implements LockedPaperDoll{
+    public static class PaperDollPoseStack extends PoseStack implements LockedPaperDoll {
     }
 }

@@ -40,7 +40,9 @@ import org.ayamemc.ayamepaperdoll.config.view.ListWidget;
 import org.ayamemc.ayamepaperdoll.config.view.Tab;
 import org.ayamemc.ayamepaperdoll.hud.PaperDollRenderer;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix3x2f;
 
+import java.nio.FloatBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -150,9 +152,9 @@ public class ConfigScreen extends Screen {
 
     @SuppressWarnings("DataFlowIssue")
     @Override
-    protected void renderBlurredBackground() {
+    protected void renderBlurredBackground(GuiGraphics guiGraphics) {
         if (minecraft.level == null || !AyamePaperDoll.CONFIGS.disableConfigScreenBlur.getValue()) {
-            super.renderBlurredBackground();
+            super.renderBlurredBackground(guiGraphics);
         }
     }
 
@@ -163,7 +165,7 @@ public class ConfigScreen extends Screen {
         if (this.minecraft.level != null) {
             this.previewHud.render(this.minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(true), guiGraphics);
             // put behind GUI
-            guiGraphics.pose().translate(0, 0, 200);
+            guiGraphics.pose().translate(0, 0, new Matrix3x2f(FloatBuffer.allocate(200)));
         }
         super.render(guiGraphics, mouseX, mouseY, delta);
     }
