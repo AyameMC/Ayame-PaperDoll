@@ -22,15 +22,13 @@ package org.ayamemc.ayamepaperdoll.mixin.retexture;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollArea;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import org.ayamemc.ayamepaperdoll.config.view.Retextured;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
-
-import java.util.function.Function;
 
 @Mixin(AbstractScrollArea.class)
 public abstract class AbstractScrollAreaMixin {
@@ -38,13 +36,13 @@ public abstract class AbstractScrollAreaMixin {
      * This is an incomplete implementation. The background and separator/header/footer are untouched.
      */
     @WrapOperation(method = "renderScrollbar", at = {
-            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Ljava/util/function/Function;Lnet/minecraft/resources/ResourceLocation;IIII)V")
+            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V")
     })
-    public void drawTransparentTextFieldTexture(GuiGraphics instance, Function<ResourceLocation, RenderType> function, ResourceLocation resourceLocation, int i, int j, int k, int l, Operation<Void> original) {
+    public void drawTransparentTextFieldTexture(GuiGraphics instance, RenderPipeline renderPipeline, ResourceLocation resourceLocation, int i, int j, int k, int l, Operation<Void> original) {
         if (this instanceof Retextured retextured) {
-            original.call(instance, function, retextured.retexture(resourceLocation), i, j, k, l);
+            original.call(instance, renderPipeline, retextured.retexture(resourceLocation), i, j, k, l);
         } else {
-            original.call(instance, function, resourceLocation, i, j, k, l);
+            original.call(instance, renderPipeline, resourceLocation, i, j, k, l);
         }
 
     }

@@ -23,8 +23,8 @@ package org.ayamemc.ayamepaperdoll.fabric;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.HudLayerRegistrationCallback;
-import net.fabricmc.fabric.api.client.rendering.v1.IdentifiedLayer;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
@@ -44,11 +44,10 @@ public class AyamePaperDollFabric implements ClientModInitializer {
                 EventHandler.keyPressed()
         );
 
-        HudLayerRegistrationCallback.EVENT.register(layeredDrawer ->
-                layeredDrawer.attachLayerAfter(
-                        IdentifiedLayer.MISC_OVERLAYS,
-                        AyamePaperDoll.path("ayame_paperdoll_renderer_layer_after_misc_overlays"),
-                        EventHandler::renderPaperDoll)
+        HudElementRegistry.attachElementAfter(
+                VanillaHudElements.MISC_OVERLAYS,
+                AyamePaperDoll.path("ayame_paperdoll_renderer_layer_after_misc_overlays"),
+                EventHandler::renderPaperDoll
         );
     }
 }

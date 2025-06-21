@@ -22,7 +22,6 @@ package org.ayamemc.ayamepaperdoll.mixin.patch;
 
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.player.AbstractClientPlayer;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.LivingEntityRenderer;
 import net.minecraft.client.renderer.entity.player.PlayerRenderer;
@@ -31,18 +30,21 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(PlayerRenderer.class)
 public abstract class PlayerRendererMixin extends LivingEntityRenderer<AbstractClientPlayer, PlayerRenderState, PlayerModel> {
-
     public PlayerRendererMixin(EntityRendererProvider.Context context, PlayerModel model, float shadowRadius) {
         super(context, model, shadowRadius);
     }
-
-    @Override
-    protected RenderType getRenderType(PlayerRenderState state, boolean visible, boolean translucent, boolean glowing) {
-        if (true) {
-            return RenderType.entityCutoutNoCull(this.getTextureLocation(state));
-        } else {
-            return super.getRenderType(state, visible, translucent, glowing);
-        }
-    }
+//
+//    public PlayerRendererMixin(EntityRendererProvider.Context context, PlayerModel model, float shadowRadius) {
+//        super(context, model, shadowRadius);
+//    }
+//
+//    @Override
+//    protected RenderType getRenderType(PlayerRenderState state, boolean visible, boolean translucent, boolean glowing) {
+//        if (true) {
+//            return RenderType.entityCutoutNoCull(this.getTextureLocation(state));
+//        } else {
+//            return super.getRenderType(state, visible, translucent, glowing);
+//        }
+//    }
 }
 

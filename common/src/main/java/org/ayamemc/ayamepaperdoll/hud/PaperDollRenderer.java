@@ -21,10 +21,7 @@
 package org.ayamemc.ayamepaperdoll.hud;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.Lighting;
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
@@ -32,21 +29,17 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.Configs.RotationMode;
 import org.ayamemc.ayamepaperdoll.hud.DataBackup.DataBackupEntry;
-import org.ayamemc.ayamepaperdoll.util.DisableCullFlag;
-import org.joml.Matrix4fStack;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -121,71 +114,72 @@ public class PaperDollRenderer {
     // 这会导致织布机渲染问题，不要使用↓
     // follow convention in LayeredDrawer#renderInternal
     // guiGraphics.pose().translate(0, 0, 200);
-
     /**
      * Mimics the code in {@link InventoryScreen#renderEntityInInventory}
      */
     public void render(float partialTicks, GuiGraphics guiGraphics) {
-        if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll.getValue()) return;
-        LivingEntity targetEntity = minecraft.level.players().stream().filter(p -> p.getName().getString().equals(CONFIGS.playerName.getValue())).findFirst().orElse(minecraft.player);
-        if (CONFIGS.spectatorAutoSwitch.getValue() && minecraft.player.isSpectator()) {
-            Entity cameraEntity = minecraft.getCameraEntity();
-            if (cameraEntity instanceof LivingEntity livingEntity) {
-                targetEntity = livingEntity;
-            } else if (cameraEntity != null) {
-                return;
-            }
-        }
-
-        int scaledWidth = minecraft.getWindow().getGuiScaledWidth();
-        int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
-        Configs.PoseOffsetMethod poseOffsetMethod = CONFIGS.poseOffsetMethod.getValue();
-
-        var backup = new DataBackup<>(targetEntity, LIVINGENTITY_BACKUP_ENTRIES);
-        backup.save();
-
-        transformEntity(targetEntity, partialTicks, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
-
-        DataBackup<LivingEntity> vehicleBackup = null;
-        if (CONFIGS.renderVehicle.getValue() && poseOffsetMethod != Configs.PoseOffsetMethod.FORCE_STANDING && targetEntity.isPassenger()) {
-            var vehicle = targetEntity.getVehicle();
-            assert vehicle != null;
-
-            // get the overall yaw before transforming
-            var yawLerped = vehicle.getViewYRot(partialTicks);
-
-            // FIXME: NEVERFIX - the rendered yaw of minecart is determined non-trivially in its MinecartEntityRenderer#render, so it cannot be fixed to 0 easily
-            if (vehicle instanceof LivingEntity livingVehicle) {
-                vehicleBackup = new DataBackup<>(livingVehicle, LIVINGENTITY_BACKUP_ENTRIES);
-                vehicleBackup.save();
-                transformEntity(livingVehicle, partialTicks, false);
-            }
-
-            performRendering(vehicle,
-                    CONFIGS.offsetX.getValue() * scaledWidth,
-                    CONFIGS.offsetY.getValue() * scaledHeight,
-                    CONFIGS.size.getValue() * scaledHeight,
-                    CONFIGS.mirrored.getValue(),
-                    vehicle.getPosition(partialTicks).subtract(targetEntity.getPosition(partialTicks))
-                            .yRot((float) Math.toRadians(yawLerped)).toVector3f(), // undo the rotation
-                    CONFIGS.lightDegree.getValue(),
-                    partialTicks, guiGraphics);
-        }
-
-
-        performRendering(targetEntity,
-                CONFIGS.offsetX.getValue() * scaledWidth,
-                CONFIGS.offsetY.getValue() * scaledHeight,
-                CONFIGS.size.getValue() * scaledHeight,
-                CONFIGS.mirrored.getValue(),
-                new Vector3f(0, (float) getPoseOffsetY(targetEntity, partialTicks, poseOffsetMethod), 0),
-                CONFIGS.lightDegree.getValue(),
-                partialTicks, guiGraphics);
-
-        if (vehicleBackup != null) vehicleBackup.restore();
-
-        backup.restore();
     }
+//    public void render(float partialTicks, GuiGraphics guiGraphics) {
+//        if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll.getValue()) return;
+//        LivingEntity targetEntity = minecraft.level.players().stream().filter(p -> p.getName().getString().equals(CONFIGS.playerName.getValue())).findFirst().orElse(minecraft.player);
+//        if (CONFIGS.spectatorAutoSwitch.getValue() && minecraft.player.isSpectator()) {
+//            Entity cameraEntity = minecraft.getCameraEntity();
+//            if (cameraEntity instanceof LivingEntity livingEntity) {
+//                targetEntity = livingEntity;
+//            } else if (cameraEntity != null) {
+//                return;
+//            }
+//        }
+//
+//        int scaledWidth = minecraft.getWindow().getGuiScaledWidth();
+//        int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
+//        Configs.PoseOffsetMethod poseOffsetMethod = CONFIGS.poseOffsetMethod.getValue();
+//
+//        var backup = new DataBackup<>(targetEntity, LIVINGENTITY_BACKUP_ENTRIES);
+//        backup.save();
+//
+//        transformEntity(targetEntity, partialTicks, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
+//
+//        DataBackup<LivingEntity> vehicleBackup = null;
+//        if (CONFIGS.renderVehicle.getValue() && poseOffsetMethod != Configs.PoseOffsetMethod.FORCE_STANDING && targetEntity.isPassenger()) {
+//            var vehicle = targetEntity.getVehicle();
+//            assert vehicle != null;
+//
+//            // get the overall yaw before transforming
+//            var yawLerped = vehicle.getViewYRot(partialTicks);
+//
+//            // FIXME: NEVERFIX - the rendered yaw of minecart is determined non-trivially in its MinecartEntityRenderer#render, so it cannot be fixed to 0 easily
+//            if (vehicle instanceof LivingEntity livingVehicle) {
+//                vehicleBackup = new DataBackup<>(livingVehicle, LIVINGENTITY_BACKUP_ENTRIES);
+//                vehicleBackup.save();
+//                transformEntity(livingVehicle, partialTicks, false);
+//            }
+//
+//            performRendering(vehicle,
+//                    CONFIGS.offsetX.getValue() * scaledWidth,
+//                    CONFIGS.offsetY.getValue() * scaledHeight,
+//                    CONFIGS.size.getValue() * scaledHeight,
+//                    CONFIGS.mirrored.getValue(),
+//                    vehicle.getPosition(partialTicks).subtract(targetEntity.getPosition(partialTicks))
+//                            .yRot((float) Math.toRadians(yawLerped)).toVector3f(), // undo the rotation
+//                    CONFIGS.lightDegree.getValue(),
+//                    partialTicks, guiGraphics);
+//        }
+//
+//
+//        performRendering(targetEntity,
+//                CONFIGS.offsetX.getValue() * scaledWidth,
+//                CONFIGS.offsetY.getValue() * scaledHeight,
+//                CONFIGS.size.getValue() * scaledHeight,
+//                CONFIGS.mirrored.getValue(),
+//                new Vector3f(0, (float) getPoseOffsetY(targetEntity, partialTicks, poseOffsetMethod), 0),
+//                CONFIGS.lightDegree.getValue(),
+//                partialTicks, guiGraphics);
+//
+//        if (vehicleBackup != null) vehicleBackup.restore();
+//
+//        backup.restore();
+//    }
 
     private double getPoseOffsetY(LivingEntity targetEntity, float partialTicks, Configs.PoseOffsetMethod poseOffsetMethod) {
         if (poseOffsetMethod == Configs.PoseOffsetMethod.AUTO) {
@@ -277,68 +271,68 @@ public class PaperDollRenderer {
 
     private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean mirror,
                                   Vector3f offset, double lightDegree, float partialTicks, GuiGraphics guiGraphics) {
-        EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
+        Minecraft mc = Minecraft.getInstance();
+        EntityRenderDispatcher dispatcher = mc.getEntityRenderDispatcher();
+        MultiBufferSource.BufferSource bufferSource = mc.renderBuffers().bufferSource();
 
-        Matrix4fStack modelViewStack = RenderSystem.getModelViewStack();
-        modelViewStack.pushMatrix();
-        modelViewStack.scale(mirror ? -1 : 1, 1, -1);
-        // IDK what shit Mojang made but let's add 180 deg to restore the old behavior
-        modelViewStack.rotateY((float) Math.toRadians(lightDegree + 180));
+        PoseStack poseStack = new PoseStack(); // Uses the current GUI rendering pose
+        poseStack.pushPose();
 
-        PoseStack poseStack = new PaperDollPoseStack();
-        poseStack.mulPose(Axis.YP.rotationDegrees(-(float) lightDegree - 180));
-        poseStack.translate((mirror ? -1 : 1) * posX, posY, 0);
+        // Move to position on screen
+        poseStack.translate(posX, posY, 1050.0); // z=1050 to ensure it's in front
+        poseStack.scale(1.0F, 1.0F, -1.0F); // Flip Z to render properly in GUI
+
+        // Apply scale
         poseStack.scale((float) size, (float) size, (float) size);
-        Quaternionf zRot = new Quaternionf().rotateZ((float) Math.PI);
 
-        final RotationMode rotationMode = CONFIGS.rotationMode.getValue();
+        // Center the model and rotate
+        Quaternionf baseRotation = new Quaternionf().rotateZ((float) Math.PI); // flip upright
+        Quaternionf additionalRotation = new Quaternionf().rotateXYZ(
+                (float) Math.toRadians(CONFIGS.rotationX.getValue()),
+                (float) Math.toRadians(CONFIGS.rotationY.getValue()),
+                (float) Math.toRadians(CONFIGS.rotationZ.getValue())
+        );
+        baseRotation.mul(additionalRotation);
+        poseStack.mulPose(baseRotation);
 
-        Quaternionf xyzRot = /*(rotationMode == RotationMode.SMOOTH_LOCK) ?
-                new Quaternionf().rotateXYZ(
-                        (float) Math.toRadians(CONFIGS.rotationX.getValue()),
-                        (float) ((targetEntity.getYRot() + CONFIGS.rotationY.getValue() - 180) * ((float) Math.PI / 180F)),
-                        (float) Math.toRadians(CONFIGS.rotationZ.getValue()))
-                :*/
-                new Quaternionf().rotateXYZ(
-                        (float) Math.toRadians(CONFIGS.rotationX.getValue()),
-                        (float) Math.toRadians(CONFIGS.rotationY.getValue()),
-                        (float) Math.toRadians(CONFIGS.rotationZ.getValue()));
+        // Apply offset (e.g., to center for vehicles)
+        poseStack.translate(offset.x(), offset.y(), offset.z());
 
-        zRot.mul(xyzRot);
-        poseStack.mulPose(zRot);
+        // Configure lighting and render shadow/hitbox flags
+        //Lighting.setupForEntityInInventory();
+        boolean prevHitbox = dispatcher.shouldRenderHitBoxes();
+        dispatcher.setRenderHitBoxes(false);
+        dispatcher.setRenderShadow(false);
 
-        if (targetEntity instanceof Boat) {
-            poseStack.mulPose(new Quaternionf().rotateY((float) Math.toRadians(180)));
-        }
+        // Override camera direction to control lighting
+        Quaternionf lightDirection = new Quaternionf().rotateXYZ(
+                0,
+                (float) Math.toRadians(lightDegree + 180),
+                0
+        );
+        dispatcher.overrideCameraOrientation(lightDirection);
 
-        Lighting.setupForEntityInInventory();
-        xyzRot.conjugate();
+        // Do the actual render
+        dispatcher.render(
+                targetEntity,
+                0.0, 0.0, 0.0,                // 偏移，这里一般填 0，模型原点居中即可
+                partialTicks,                // 插值时间
+                poseStack,                   // 当前的 PoseStack
+                bufferSource,                // 渲染用的 BufferSource
+                getLight(targetEntity, partialTicks) // packedLight（用于控制亮度）
+        );
 
-        entityRenderDispatcher.overrideCameraOrientation(xyzRot);
-        boolean renderHitbox = entityRenderDispatcher.shouldRenderHitBoxes();
-        entityRenderDispatcher.setRenderHitBoxes(false);
-        entityRenderDispatcher.setRenderShadow(false);
-        MultiBufferSource.BufferSource bufferSource = minecraft.renderBuffers().bufferSource();
-        // TODO: 修复矿车锁定旋转时不被锁定的问题
-        DisableCullFlag.forceDisableCull.set(true);
-        try {
-            guiGraphics.drawSpecial(multiBufferSource ->
-                    entityRenderDispatcher.render(targetEntity, offset.x, offset.y, offset.z, partialTicks, poseStack, bufferSource, getLight(targetEntity, partialTicks)));
-        } finally {
-            DisableCullFlag.forceDisableCull.set(false);
-        }
 
-        // 事实证明1.21.3+只需一直禁用剔除，镜像也不会导致什么问题
-//        bufferSource.ayame_PaperDoll$setForceDisableCulling(true);
         bufferSource.endBatch();
 
-        // do not need to restore this value in fact
-        entityRenderDispatcher.setRenderShadow(true);
-        entityRenderDispatcher.setRenderHitBoxes(renderHitbox);
+        // Restore state
+        dispatcher.setRenderShadow(true);
+        dispatcher.setRenderHitBoxes(prevHitbox);
+        //Lighting.setupFor3DItems();
 
-        modelViewStack.popMatrix();
-        Lighting.setupFor3DItems();
+        poseStack.popPose();
     }
+
 
     public Rectangle2D.Double getRenderBounds() {
         return this.currentRenderBounds;
@@ -347,6 +341,6 @@ public class PaperDollRenderer {
     public interface LockedPaperDoll {
     }
 
-    public static class PaperDollPoseStack extends PoseStack implements LockedPaperDoll {
+    public static class PaperDollPoseStack extends PoseStack implements LockedPaperDoll{
     }
 }
