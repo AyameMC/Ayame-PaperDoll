@@ -21,6 +21,7 @@
 package org.ayamemc.ayamepaperdoll.hud;
 
 import com.google.common.collect.ImmutableList;
+import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -272,59 +273,57 @@ public class PaperDollRenderer {
 
     private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean mirror,
                                   Vector3f offset, double lightDegree, float partialTicks, GuiGraphics guiGraphics) {
+        // 1. 获取屏幕尺寸作为最大限制
+        Window window = minecraft.getWindow();
+        int maxWidth = window.getGuiScaledWidth();
+        int maxHeight = window.getGuiScaledHeight();
+
+        // 2. 计算基础裁剪区域大小（根据你的需求调整为4倍size）
+        int scissorSize = (int) (4 * size);
+
+        // 3. 限制裁剪区域不超过屏幕尺寸
+        scissorSize = Math.min(scissorSize, Math.min(maxWidth, maxHeight));
+
+        // 4. 计算裁剪位置并确保不超出屏幕边界
+        int scissorX = (int) Math.max(0, Math.min(posX - scissorSize / 2.0, maxWidth - scissorSize));
+        int scissorY = (int) Math.max(0, Math.min(posY - scissorSize / 2.0, maxHeight - scissorSize));
+
+        // 5. 调试用矩形绘制（半透明青色）
+        guiGraphics.fill(scissorX, scissorY, scissorX + scissorSize, scissorY + scissorSize, 0x7D16C7FF);
+
+        // 其余渲染逻辑保持不变...
         EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
+
         EntityRenderer<? super Entity, ?> entityRenderer = entityRenderDispatcher.getRenderer(targetEntity);
 
-        // 创建 EntityRenderState
         EntityRenderState state = entityRenderer.createRenderState(targetEntity, partialTicks);
-        state.hitboxesRenderState = null; // 禁用碰撞箱
+        state.hitboxesRenderState = null;
 
-        // 构建基础旋转（Z轴180度旋转）
-        Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
-        pose.rotateY((float) Math.PI);
-        // 添加配置旋转
-        final RotationMode rotationMode = CONFIGS.rotationMode.getValue();
+        Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI).rotateY((float) Math.PI);
         Quaternionf configRot = new Quaternionf().rotateXYZ(
                 (float) Math.toRadians(CONFIGS.rotationX.getValue()),
                 (float) Math.toRadians(CONFIGS.rotationY.getValue()),
                 (float) Math.toRadians(CONFIGS.rotationZ.getValue()));
 
+        pose.mul(configRot).rotateY((float) Math.toRadians(lightDegree + 180));
 
-
-        // 应用配置旋转
-        pose.mul(configRot);
-
-        // 添加光源旋转
-        pose.rotateY((float) Math.toRadians(lightDegree + 180));
-
-        // 船的额外旋转
         if (targetEntity instanceof Boat) {
             pose.rotateY((float) Math.toRadians(180));
         }
 
-        // 缩放因子（不再使用负值）
-        float scale = (float) size;
 
-        // 创建相机方向
-        Quaternionf cameraOrientation = new Quaternionf(configRot).conjugate();
-
-        // 计算裁剪区域
-        int scissorSize = (int) (100 * size); // 增大裁剪区域确保完整显示
-        int scissorX = (int) (posX - scissorSize / 2.0);
-        int scissorY = (int) (posY - scissorSize / 2.0);
-
-        // 提交渲染状态
         guiGraphics.submitEntityRenderState(
                 state,
-                scale,
+                (float) size,
                 offset,
                 pose,
-                cameraOrientation,
+                new Quaternionf(configRot).conjugate(),
                 scissorX,
                 scissorY,
                 scissorX + scissorSize,
                 scissorY + scissorSize
         );
+
     }
 
 
