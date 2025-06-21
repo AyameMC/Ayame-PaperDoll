@@ -36,6 +36,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.entity.vehicle.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
@@ -269,52 +270,60 @@ public class PaperDollRenderer {
         targetEntity.setSharedFlag(0, false);
     }
 
-    private void performRendering(Entity targetEntity,
-                                  double posX, double posY, double size, boolean mirror,
-                                  Vector3f offset, double lightDegree, float partialTicks,
-                                  GuiGraphics guiGraphics) {
-        // 计算旋转
-        Quaternionf zRot = new Quaternionf().rotateZ((float) Math.PI);
-        Quaternionf xyzRot = new Quaternionf().rotateXYZ(
+    private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean mirror,
+                                  Vector3f offset, double lightDegree, float partialTicks, GuiGraphics guiGraphics) {
+        EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
+        EntityRenderer<? super Entity, ?> entityRenderer = entityRenderDispatcher.getRenderer(targetEntity);
+
+        // 创建 EntityRenderState
+        EntityRenderState state = entityRenderer.createRenderState(targetEntity, partialTicks);
+        state.hitboxesRenderState = null; // 禁用碰撞箱
+
+        // 构建基础旋转（Z轴180度旋转）
+        Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI);
+        pose.rotateY((float) Math.PI);
+        // 添加配置旋转
+        final RotationMode rotationMode = CONFIGS.rotationMode.getValue();
+        Quaternionf configRot = new Quaternionf().rotateXYZ(
                 (float) Math.toRadians(CONFIGS.rotationX.getValue()),
                 (float) Math.toRadians(CONFIGS.rotationY.getValue()),
                 (float) Math.toRadians(CONFIGS.rotationZ.getValue()));
-        Quaternionf pose = zRot.mul(xyzRot); // 实体本身旋转
-        Quaternionf cameraOrientation = new Quaternionf(xyzRot).conjugate(); // 相机朝向
-
-        // 镜像处理（scale 或直接变换）
-        float scale = (float) size * (mirror ? -1.0f : 1.0f);
-
-////        this.leftPos = (this.width - this.imageWidth) / 2;
-////        this.topPos = (this.height - this.imageHeight) / 2;
-//
-//        Window window = minecraft.getWindow();
-//        var leftPos = window.getGuiScaledWidth() /2;
-//        var topPos = window.getGuiScaledHeight() /2;
-//
-        double  x1 = 1;
-        double  y1 = 1;
-        double x2 =  1;
-        double  y2 = 1;
 
 
 
+        // 应用配置旋转
+        pose.mul(configRot);
 
+        // 添加光源旋转
+        pose.rotateY((float) Math.toRadians(lightDegree + 180));
 
-        // 创建渲染状态并提交
-        EntityRenderDispatcher dispatcher = Minecraft.getInstance().getEntityRenderDispatcher();
-        EntityRenderer<? super Entity, ?> renderer = dispatcher.getRenderer(targetEntity);
-        EntityRenderState renderState = renderer.createRenderState(targetEntity, partialTicks);
-        renderState.hitboxesRenderState = null;
+        // 船的额外旋转
+        if (targetEntity instanceof Boat) {
+            pose.rotateY((float) Math.toRadians(180));
+        }
 
+        // 缩放因子（不再使用负值）
+        float scale = (float) size;
 
+        // 创建相机方向
+        Quaternionf cameraOrientation = new Quaternionf(configRot).conjugate();
+
+        // 计算裁剪区域
+        int scissorSize = (int) (100 * size); // 增大裁剪区域确保完整显示
+        int scissorX = (int) (posX - scissorSize / 2.0);
+        int scissorY = (int) (posY - scissorSize / 2.0);
+
+        // 提交渲染状态
         guiGraphics.submitEntityRenderState(
-                renderState,
+                state,
                 scale,
                 offset,
                 pose,
                 cameraOrientation,
-                (int) x1, (int) y1, (int) x2, (int) y2
+                scissorX,
+                scissorY,
+                scissorX + scissorSize,
+                scissorY + scissorSize
         );
     }
 
