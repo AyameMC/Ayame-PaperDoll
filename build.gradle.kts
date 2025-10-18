@@ -81,6 +81,7 @@ subprojects {
     }
 
     tasks.withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         from(rootProject.file("COPYING"))
         from(rootProject.file("COPYING.LESSER"))
         from(rootProject.file("licenses")) {
