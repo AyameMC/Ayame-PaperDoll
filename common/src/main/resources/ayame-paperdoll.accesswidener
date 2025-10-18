@@ -1,4 +1,5 @@
 accessWidener v2 named
+accessible class net/minecraft/client/gui/GuiGraphics$ScissorStack
 accessible field net/minecraft/world/entity/LivingEntity swimAmount F
 accessible field net/minecraft/world/entity/LivingEntity swimAmountO F
 accessible field net/minecraft/world/entity/Entity vehicle Lnet/minecraft/world/entity/Entity;
