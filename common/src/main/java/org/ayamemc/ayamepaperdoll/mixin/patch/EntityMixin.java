@@ -35,8 +35,8 @@ public abstract class EntityMixin implements EntityMixinInterface {
     private final Entity ayame_PaperDoll$entity = (Entity) (Object) this;
     @Unique
     private boolean ayame_PaperDoll$isSSitting = false;
-    @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;Z)Z", at = @At("RETURN"))
-    private void onStartRiding(Entity vehicle, boolean force, CallbackInfoReturnable<Boolean> cir) {
+    @Inject(method = "startRiding(Lnet/minecraft/world/entity/Entity;ZZ)Z", at = @At("RETURN"))
+    private void onStartRiding(Entity entity, boolean bl, boolean bl2, CallbackInfoReturnable<Boolean> cir) {
         ayame_PaperDoll$entity.ayame_paperdoll$setSitting(cir.getReturnValue());
     }
 

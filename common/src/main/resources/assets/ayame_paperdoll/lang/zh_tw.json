@@ -4,7 +4,7 @@
   "config.ayame_paperdoll.on": "開",
   "config.ayame_paperdoll.off": "關",
   "config.ayame_paperdoll.reset": "重置",
-  "key.ayame_paperdoll.category": "Ayame 紙娃娃",
+  "key.category.ayame_paperdoll.keys": "Ayame 紙娃娃",
   "key.ayame_paperdoll.openConfigGui": "開啟設定介面",
   "key.ayame_paperdoll.showPaperDoll": "切換紙娃娃顯示",
   "config.ayame_paperdoll.presets.top_left": "左上",

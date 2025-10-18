@@ -268,13 +268,13 @@ public class ConfigWidgetRegistry {
         }
 
         @Override
-        public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-            label.setPosition(x, y + LABEL_Y_OFFSET);
-            reset.setPosition(x + entryWidth - reset.getWidth(), y);
-            widget.setPosition(x + entryWidth - reset.getWidth() - widget.getWidth() - GAP_WIDTH, y);
-            widget.render(context, mouseX, mouseY, tickDelta);
-            reset.render(context, mouseX, mouseY, tickDelta);
-            label.render(context, mouseX, mouseY, tickDelta);
+        public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+            label.setPosition(getContentX(), getContentY() + LABEL_Y_OFFSET);
+            reset.setPosition(getContentX() + getContentWidth() - reset.getWidth(), getContentY());
+            widget.setPosition(getContentX()+ getContentWidth() - reset.getWidth() - widget.getWidth() - GAP_WIDTH,getContentY());
+            widget.render(guiGraphics, mouseX, mouseY, tickDelta);
+            reset.render(guiGraphics, mouseX, mouseY, tickDelta);
+            label.render(guiGraphics, mouseX, mouseY, tickDelta);
         }
     }
 

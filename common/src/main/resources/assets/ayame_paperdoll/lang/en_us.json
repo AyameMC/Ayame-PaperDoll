@@ -4,7 +4,7 @@
   "config.ayame_paperdoll.on": "On",
   "config.ayame_paperdoll.off": "Off",
   "config.ayame_paperdoll.reset": "RESET",
-  "key.ayame_paperdoll.category": "Ayame PaperDoll",
+  "key.category.ayame_paperdoll.keys": "Ayame PaperDoll",
   "key.ayame_paperdoll.openConfigGui": "Open Config GUI",
   "key.ayame_paperdoll.showPaperDoll": "Toggle PaperDoll Display",
   "config.ayame_paperdoll.presets.top_left": "Top Left",

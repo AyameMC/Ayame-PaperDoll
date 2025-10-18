@@ -19,7 +19,7 @@
  */
 
 plugins {
-    id("com.github.johnrengelman.shadow")
+    id("com.gradleup.shadow") version "9.2.2"
 }
 
 architectury {

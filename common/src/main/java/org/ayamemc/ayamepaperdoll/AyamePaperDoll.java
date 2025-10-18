@@ -36,16 +36,18 @@ public final class AyamePaperDoll {
     public static final String MOD_ID = "ayame_paperdoll";
     public static final String MOD_NAME = "Ayame PaperDoll";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
+    public static boolean identifier = false;
+    public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(path("keys"));
     public static final KeyMapping SHOW_PAPERDOLL_KEY = new KeyMapping(
             "key.%s.showPaperDoll".formatted(MOD_ID),
             InputConstants.Type.KEYSYM,
             GLFW.GLFW_KEY_F8,
-            "key.%s.category".formatted(MOD_ID));
+            CATEGORY);
     public static final KeyMapping OPEN_CONFIG_GUI = new KeyMapping(
             "key.%s.openConfigGui".formatted(MOD_ID),
             InputConstants.Type.KEYSYM,
             InputConstants.UNKNOWN.getValue(),
-            "key.%s.category".formatted(MOD_ID));
+            CATEGORY);
 
     public static final Configs CONFIGS = new Configs();
     public static final ConfigPersistence CONFIG_PERSISTENCE = new GsonConfigPersistence(Path.of("config/" + MOD_ID + "_v0.json"));

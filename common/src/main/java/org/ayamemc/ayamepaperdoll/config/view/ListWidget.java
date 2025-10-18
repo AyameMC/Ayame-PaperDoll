@@ -31,7 +31,7 @@ public class ListWidget extends ContainerObjectSelectionList<ListWidget.ListEntr
 
     public ListWidget(int width, int height, int top, int entryHeight) {
         super(Minecraft.getInstance(), width, height, top, entryHeight);
-        this.rowWidth = super.getRowWidth();
+        this.rowWidth = width - 50;
     }
 
     @Override

@@ -30,6 +30,7 @@ import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import org.apache.commons.lang3.ArrayUtils;
@@ -174,12 +175,12 @@ public class ConfigScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == CommonInterfaceInstances.keyHelper.getBoundKeyOf(AyamePaperDoll.OPEN_CONFIG_GUI).getValue() && this.shouldCloseOnEsc()) {
+    public boolean keyPressed(KeyEvent keyEvent) {
+        if (keyEvent.key() == CommonInterfaceInstances.keyHelper.getBoundKeyOf(AyamePaperDoll.OPEN_CONFIG_GUI).getValue() && this.shouldCloseOnEsc()) {
             this.onClose();
             return true;
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
+        return super.keyPressed(keyEvent);
     }
 
     private ListWidget.ListEntry getPresetsConfigEntry() {
@@ -204,14 +205,14 @@ public class ConfigScreen extends Screen {
             }
 
             @Override
-            public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                presetLabel.setPosition(x, y + labelYOffset);
-                topLeft.setPosition(x + entryWidth - buttonWidth * 4 - gap * 3, y);
-                topRight.setPosition(x + entryWidth - buttonWidth * 3 - gap * 2, y);
-                bottomLeft.setPosition(x + entryWidth - buttonWidth * 2 - gap, y);
-                bottomRight.setPosition(x + entryWidth - buttonWidth, y);
+            public void renderContent(GuiGraphics context, int i, int j,boolean hovered, float tickDelta) {
+                presetLabel.setPosition(getContentX(), getContentY() + labelYOffset);
+                topLeft.setPosition(getContentX() + getContentWidth() - buttonWidth * 4 - gap * 3, getContentY());
+                topRight.setPosition(getContentX() + getContentWidth() - buttonWidth * 3 - gap * 2, getContentY());
+                bottomLeft.setPosition(getContentX() + getContentWidth() - buttonWidth * 2 - gap, getContentY());
+                bottomRight.setPosition(getContentX() + getContentWidth() - buttonWidth, getContentY());
 
-                for (AbstractWidget child : children) child.render(context, mouseX, mouseY, tickDelta);
+                for (AbstractWidget child : children) child.render(context, i,j, tickDelta);
             }
         };
     }
@@ -232,6 +233,13 @@ public class ConfigScreen extends Screen {
         var children = List.of(visualConfigEditorButton);
         return new ListWidget.ListEntry() {
             @Override
+            public void renderContent(GuiGraphics guiGraphics, int i, int j, boolean bl, float f) {
+                visualConfigEditorButton.setPosition((getContentX()+ getContentWidth() - buttonWidth) / 2, getContentY());
+
+                for (AbstractWidget child : children) child.render(guiGraphics, i, j, f);
+            }
+
+            @Override
             public @NotNull List<? extends NarratableEntry> narratables() {
                 return children;
             }
@@ -239,13 +247,6 @@ public class ConfigScreen extends Screen {
             @Override
             public @NotNull List<? extends GuiEventListener> children() {
                 return children;
-            }
-
-            @Override
-            public void render(GuiGraphics context, int index, int y, int x, int entryWidth, int entryHeight, int mouseX, int mouseY, boolean hovered, float tickDelta) {
-                visualConfigEditorButton.setPosition((x + entryWidth - buttonWidth) / 2, y);
-
-                for (AbstractWidget child : children) child.render(context, mouseX, mouseY, tickDelta);
             }
         };
     }
