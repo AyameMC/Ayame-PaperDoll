@@ -23,11 +23,13 @@ package org.ayamemc.ayamepaperdoll.fabric;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
+import org.ayamemc.ayamepaperdoll.hud.ModRenderer;
 
 public class AyamePaperDollFabric implements ClientModInitializer {
     @Override
@@ -49,5 +51,8 @@ public class AyamePaperDollFabric implements ClientModInitializer {
                 AyamePaperDoll.path("ayame_paperdoll_renderer_layer_after_misc_overlays"),
                 EventHandler::renderPaperDoll
         );
+        SpecialGuiElementRegistry.register((context -> new ModRenderer(
+                context.vertexConsumers(),context.client().getEntityRenderDispatcher()
+        )));
     }
 }

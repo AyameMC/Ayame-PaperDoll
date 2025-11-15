@@ -1,20 +1,21 @@
 {
-  "required": true,
-  "package": "org.ayamemc.ayamepaperdoll.mixin",
-  "compatibilityLevel": "JAVA_21",
-  "minVersion": "0.8",
-  "client": [
-    "patch.AbstractBoatRendererMixin",
-    "patch.PlayerRendererMixin",
-    "retexture.AbstractButtonMixin",
-    "retexture.AbstractScrollAreaMixin",
-    "retexture.AbstractSliderButtonMixin",
-    "retexture.EditBoxMixin"
-  ],
-  "mixins": [
-    "patch.EntityMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
+    "required": true,
+    "package": "org.ayamemc.ayamepaperdoll.mixin",
+    "compatibilityLevel": "JAVA_21",
+    "minVersion": "0.8",
+    "client": [
+        "hud.GuiGraphicsMixin",
+        "patch.AbstractBoatRendererMixin",
+        "patch.BufferSourceMixin",
+        "retexture.AbstractButtonMixin",
+        "retexture.AbstractScrollAreaMixin",
+        "retexture.AbstractSliderButtonMixin",
+        "retexture.EditBoxMixin"
+    ],
+    "mixins": [
+        "patch.EntityMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
   }
 }

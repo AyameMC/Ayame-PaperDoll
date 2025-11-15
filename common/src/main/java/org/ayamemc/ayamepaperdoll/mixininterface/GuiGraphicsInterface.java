@@ -18,8 +18,22 @@
  *     along with Ayame PaperDoll.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package org.ayamemc.ayamepaperdoll.util;
+package org.ayamemc.ayamepaperdoll.mixininterface;
 
-public class DisableCullFlag {
-    public static final ThreadLocal<Boolean> forceDisableCull = ThreadLocal.withInitial(() -> false);
+import net.minecraft.client.renderer.entity.state.EntityRenderState;
+import org.jetbrains.annotations.Nullable;
+import org.joml.Quaternionf;
+import org.joml.Vector3f;
+
+public interface GuiGraphicsInterface {
+    void submitModeRenderState(
+            EntityRenderState renderState,
+            Vector3f translation,
+            Quaternionf rotation,
+            @Nullable Quaternionf overrideCameraAngle,
+            int x0,
+            int y0,
+            float scale,
+            boolean boat
+    );
 }

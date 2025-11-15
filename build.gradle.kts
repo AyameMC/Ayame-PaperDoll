@@ -23,8 +23,8 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
     id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("dev.architectury.loom") version "1.10-SNAPSHOT" apply false
-    id("com.github.johnrengelman.shadow") version "8.1.1" apply false
+    id("dev.architectury.loom") version "1.11-SNAPSHOT" apply false
+    id("com.gradleup.shadow") version "9.2.2" apply false
     id("java")
     id("maven-publish")
 }
@@ -81,6 +81,7 @@ subprojects {
     }
 
     tasks.withType<Jar> {
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
         from(rootProject.file("COPYING"))
         from(rootProject.file("COPYING.LESSER"))
         from(rootProject.file("licenses")) {

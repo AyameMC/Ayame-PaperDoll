@@ -22,6 +22,7 @@ package org.ayamemc.ayamepaperdoll.config;
 
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.ayamemc.ayamepaperdoll.hud.PaperDollRenderer;
 import org.lwjgl.glfw.GLFW;
@@ -72,9 +73,9 @@ public class VisualConfigEditorScreen extends Screen {
     }
 
     @Override
-    public boolean mouseDragged(double mouseX, double mouseY, int button, double deltaX, double deltaY) {
+    public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double deltaX, double deltaY) {
         boolean onDrag = false;
-        if (button == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (mouseButtonEvent.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
             final double newOffsetX = CONFIGS.offsetX.getValue() + (deltaX * 0.0015);
             final double newOffsetY = CONFIGS.offsetY.getValue() + (deltaY * 0.0015);
             if (newOffsetX < CONFIGS.offsetX.getMax() && newOffsetY > CONFIGS.offsetY.getMin()) {
@@ -85,7 +86,7 @@ public class VisualConfigEditorScreen extends Screen {
             }
             onDrag = true;
         }
-        if (button == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+        if (mouseButtonEvent.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
             final double newRotationY = CONFIGS.rotationY.getValue() + deltaX;
             if (newRotationY < CONFIGS.rotationY.getMax() && newRotationY > CONFIGS.rotationY.getMin()) {
                 CONFIGS.rotationY.setValue(newRotationY);
@@ -105,6 +106,10 @@ public class VisualConfigEditorScreen extends Screen {
             return true;
         }
         return false;
+    }
+
+    @Override
+    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
     }
 
 }

@@ -21,7 +21,6 @@
 package org.ayamemc.ayamepaperdoll.hud;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.platform.Window;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -43,6 +42,7 @@ import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.Configs.RotationMode;
 import org.ayamemc.ayamepaperdoll.hud.DataBackup.DataBackupEntry;
+import org.ayamemc.ayamepaperdoll.mixininterface.GuiGraphicsInterface;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -161,9 +161,9 @@ public class PaperDollRenderer {
                     CONFIGS.offsetX.getValue() * scaledWidth,
                     CONFIGS.offsetY.getValue() * scaledHeight,
                     CONFIGS.size.getValue() * scaledHeight,
-                    CONFIGS.mirrored.getValue(),
+                    true,
                     vehicle.getPosition(partialTicks).subtract(targetEntity.getPosition(partialTicks))
-                            .yRot((float) Math.toRadians(yawLerped)).toVector3f(), // undo the rotation
+                            .yRot((float) Math.toRadians(yawLerped+180)).toVector3f(), // undo the rotation
                     CONFIGS.lightDegree.getValue(),
                     partialTicks, guiGraphics);
         }
@@ -173,7 +173,7 @@ public class PaperDollRenderer {
                 CONFIGS.offsetX.getValue() * scaledWidth,
                 CONFIGS.offsetY.getValue() * scaledHeight,
                 CONFIGS.size.getValue() * scaledHeight,
-                CONFIGS.mirrored.getValue(),
+                false,
                 new Vector3f(0, (float) getPoseOffsetY(targetEntity, partialTicks, poseOffsetMethod), 0),
                 CONFIGS.lightDegree.getValue(),
                 partialTicks, guiGraphics);
@@ -271,33 +271,18 @@ public class PaperDollRenderer {
         targetEntity.setSharedFlag(0, false);
     }
 
-    private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean mirror,
+    private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean boat,
                                   Vector3f offset, double lightDegree, float partialTicks, GuiGraphics guiGraphics) {
-        // 1. 获取屏幕尺寸作为最大限制
-        Window window = minecraft.getWindow();
-        int maxWidth = window.getGuiScaledWidth();
-        int maxHeight = window.getGuiScaledHeight();
-
-        // 2. 计算基础裁剪区域大小（根据你的需求调整为4倍size）
-        int scissorSize = (int) (4 * size);
-
-        // 3. 限制裁剪区域不超过屏幕尺寸
-        scissorSize = Math.min(scissorSize, Math.min(maxWidth, maxHeight));
-
-        // 4. 计算裁剪位置并确保不超出屏幕边界
-        int scissorX = (int) Math.max(0, Math.min(posX - scissorSize / 2.0, maxWidth - scissorSize));
-        int scissorY = (int) Math.max(0, Math.min(posY - scissorSize / 2.0, maxHeight - scissorSize));
-
-        // 5. 调试用矩形绘制（半透明青色）
-        guiGraphics.fill(scissorX, scissorY, scissorX + scissorSize, scissorY + scissorSize, 0x7D16C7FF);
-
         // 其余渲染逻辑保持不变...
         EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
 
         EntityRenderer<? super Entity, ?> entityRenderer = entityRenderDispatcher.getRenderer(targetEntity);
 
         EntityRenderState state = entityRenderer.createRenderState(targetEntity, partialTicks);
+        state.lightCoords =getLight(targetEntity,partialTicks);
         state.hitboxesRenderState = null;
+        state.shadowPieces.clear();
+        state.outlineColor = 0;
 
         Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI).rotateY((float) Math.PI);
         Quaternionf configRot = new Quaternionf().rotateXYZ(
@@ -310,20 +295,16 @@ public class PaperDollRenderer {
         if (targetEntity instanceof Boat) {
             pose.rotateY((float) Math.toRadians(180));
         }
-
-
-        guiGraphics.submitEntityRenderState(
+        ((GuiGraphicsInterface)guiGraphics).submitModeRenderState(
                 state,
-                (float) size,
                 offset,
                 pose,
                 new Quaternionf(configRot).conjugate(),
-                scissorX,
-                scissorY,
-                scissorX + scissorSize,
-                scissorY + scissorSize
+                (int) posX,
+                (int) posY,
+                (float) size,
+                boat
         );
-
     }
 
 

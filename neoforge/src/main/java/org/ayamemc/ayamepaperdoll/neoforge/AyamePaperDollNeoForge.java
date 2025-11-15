@@ -22,13 +22,16 @@ package org.ayamemc.ayamepaperdoll.neoforge;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
+import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModLoadingContext;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
+import net.neoforged.neoforge.client.event.RegisterPictureInPictureRenderersEvent;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
@@ -36,6 +39,8 @@ import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.config.ConfigScreen;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
+import org.ayamemc.ayamepaperdoll.hud.ModRenderState;
+import org.ayamemc.ayamepaperdoll.hud.ModRenderer;
 
 @Mod(value = AyamePaperDoll.MOD_ID, dist = Dist.CLIENT)
 public final class AyamePaperDollNeoForge {
@@ -46,6 +51,7 @@ public final class AyamePaperDollNeoForge {
         AyamePaperDoll.init();
 
         modBus.addListener(AyamePaperDollNeoForge::registerKeyMapping);
+        modBus.addListener(AyamePaperDollNeoForge::registerPip);
 
         NeoForge.EVENT_BUS.addListener(AyamePaperDollNeoForge::renderPaperDoll);
         NeoForge.EVENT_BUS.addListener(AyamePaperDollNeoForge::onClientTick);
@@ -54,7 +60,16 @@ public final class AyamePaperDollNeoForge {
                 IConfigScreenFactory.class,
                 () -> (modContainer, lastScreen) -> new ConfigScreen(lastScreen, AyamePaperDoll.CONFIGS.getOptions())
         );
-
+    }
+    @SubscribeEvent // on the mod event bus
+    public static void registerPip(RegisterPictureInPictureRenderersEvent event) {
+        event.register(
+                ModRenderState.class,
+                // A factory that takes in the `MultiBufferSource.BufferSource` and returns the PiP renderer
+                (ctx)-> new ModRenderer(
+                        ctx,Minecraft.getInstance().getEntityRenderDispatcher()
+                )
+        );
     }
 
     private static void renderPaperDoll(RenderGuiEvent.Pre event) {

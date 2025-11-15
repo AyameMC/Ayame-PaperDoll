@@ -46,6 +46,10 @@ public class ListWidget extends ContainerObjectSelectionList<ListWidget.ListEntr
 
     public void setRowWidth(int rowWidth) {
         this.rowWidth = rowWidth;
+        for(ListEntry entry : this.children()){
+            entry.setX(getRowLeft());
+            entry.setWidth(rowWidth);
+        }
     }
 
     @Override
