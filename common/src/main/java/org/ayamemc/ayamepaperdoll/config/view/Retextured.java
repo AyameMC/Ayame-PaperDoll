@@ -20,8 +20,8 @@
 
 package org.ayamemc.ayamepaperdoll.config.view;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 public interface Retextured {
-    ResourceLocation retexture(ResourceLocation oldTexture);
+    Identifier retexture(Identifier oldTexture);
 }

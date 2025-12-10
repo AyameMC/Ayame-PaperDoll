@@ -20,7 +20,7 @@
 
 package org.ayamemc.ayamepaperdoll.config;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.tuple.Pair;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.config.model.ConfigOption;
@@ -33,11 +33,11 @@ import java.util.HashSet;
 import java.util.List;
 
 public class Configs {
-    public static final ResourceLocation GENERAL_CATEGORY = AyamePaperDoll.path("general");
-    public static final ResourceLocation ROTATIONS_CATEGORY = AyamePaperDoll.path("rotations");
-    public static final ResourceLocation POSTURES_CATEGORY = AyamePaperDoll.path("postures");
-    public static final ResourceLocation DETAILS_CATEGORY = AyamePaperDoll.path("details");
-    public static final ResourceLocation HIDDEN_CATEGORY = AyamePaperDoll.path("hidden");
+    public static final Identifier GENERAL_CATEGORY = AyamePaperDoll.path("general");
+    public static final Identifier ROTATIONS_CATEGORY = AyamePaperDoll.path("rotations");
+    public static final Identifier POSTURES_CATEGORY = AyamePaperDoll.path("postures");
+    public static final Identifier DETAILS_CATEGORY = AyamePaperDoll.path("details");
+    public static final Identifier HIDDEN_CATEGORY = AyamePaperDoll.path("hidden");
     public final SimpleOption<Boolean> displayPaperDoll = new SimpleOption<>(GENERAL_CATEGORY, AyamePaperDoll.path("display_paperdoll"), true);
     public final SimpleOption<RotationMode> rotationMode = new SimpleOption<>(GENERAL_CATEGORY, AyamePaperDoll.path("rotation_mode"), RotationMode.LOCK);
     public final SimpleNumericOption<Double> offsetX = new SimpleNumericOption<>(GENERAL_CATEGORY, AyamePaperDoll.path("offset_x"), 0.08, -0.5, 1.5);
@@ -122,7 +122,7 @@ public class Configs {
                 .map(f -> (ConfigOption<?>) f)
                 .toList();
 
-        var unique = new HashSet<Pair<ResourceLocation, ResourceLocation>>();
+        var unique = new HashSet<Pair<Identifier, Identifier>>();
         for (ConfigOption<?> option : this.options) {
             if (!unique.add(Pair.of(option.getCategory(), option.getId()))) {
                 throw new IllegalStateException("Duplicated option id: " + option.getId() + " in category " + option.getCategory());

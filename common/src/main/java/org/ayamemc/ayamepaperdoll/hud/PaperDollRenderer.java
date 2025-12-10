@@ -36,7 +36,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.Boat;
+import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
@@ -119,7 +119,7 @@ public class PaperDollRenderer {
     // guiGraphics.pose().translate(0, 0, 200);
 
     /**
-     * Mimics the code in {@link InventoryScreen#renderEntityInInventory}
+     * Mimics the code in {@link InventoryScreen#renderEntityInInventoryFollowsMouse}
      */
     public void render(float partialTicks, GuiGraphics guiGraphics) {
         if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll.getValue()) return;
@@ -280,7 +280,6 @@ public class PaperDollRenderer {
 
         EntityRenderState state = entityRenderer.createRenderState(targetEntity, partialTicks);
         state.lightCoords =getLight(targetEntity,partialTicks);
-        state.hitboxesRenderState = null;
         state.shadowPieces.clear();
         state.outlineColor = 0;
 

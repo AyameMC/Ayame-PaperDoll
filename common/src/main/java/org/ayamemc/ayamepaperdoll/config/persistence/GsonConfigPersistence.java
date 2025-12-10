@@ -23,7 +23,7 @@ package org.ayamemc.ayamepaperdoll.config.persistence;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.stream.JsonToken;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.config.model.ConfigOption;
 
@@ -95,7 +95,7 @@ public class GsonConfigPersistence implements ConfigPersistence {
             // for each category
             while (reader.peek() == JsonToken.NAME) {
                 var categoryName = reader.nextName();
-                var category = categories.get(ResourceLocation.parse(categoryName));
+                var category = categories.get(Identifier.parse(categoryName));
                 if (category == null)
                     throw new IllegalStateException("The category with key " + categoryName + "does not exist");
 
@@ -104,7 +104,7 @@ public class GsonConfigPersistence implements ConfigPersistence {
                 // for each option in the category
                 while (reader.peek() == JsonToken.NAME) {
                     var optionName = reader.nextName();
-                    var option = category.get(ResourceLocation.parse(optionName));
+                    var option = category.get(Identifier.parse(optionName));
                     if (option == null)
                         throw new IllegalStateException("The option with key " + optionName + " in category " + categoryName + " does not exist");
 
@@ -142,8 +142,8 @@ public class GsonConfigPersistence implements ConfigPersistence {
         return true;
     }
 
-    private Map<ResourceLocation, Map<ResourceLocation, ConfigOption<?>>> categorize(List<? extends ConfigOption<?>> options) {
-        var categories = new LinkedHashMap<ResourceLocation, Map<ResourceLocation, ConfigOption<?>>>();
+    private Map<Identifier, Map<Identifier, ConfigOption<?>>> categorize(List<? extends ConfigOption<?>> options) {
+        var categories = new LinkedHashMap<Identifier, Map<Identifier, ConfigOption<?>>>();
         for (ConfigOption<?> option : options)
             categories.computeIfAbsent(option.getCategory(), k -> new LinkedHashMap<>()).put(option.getId(), option);
         return categories;

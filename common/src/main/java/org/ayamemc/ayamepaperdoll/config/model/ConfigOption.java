@@ -21,7 +21,7 @@
 package org.ayamemc.ayamepaperdoll.config.model;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.Objects;
 
@@ -47,9 +47,9 @@ public interface ConfigOption<T> {
 
     T getValue();
 
-    ResourceLocation getCategory();
+    Identifier getCategory();
 
-    ResourceLocation getId();
+    Identifier getId();
 
     Component getName();
 

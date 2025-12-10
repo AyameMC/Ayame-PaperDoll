@@ -22,7 +22,7 @@ package org.ayamemc.ayamepaperdoll.config.view;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 
 public class ListWidget extends ContainerObjectSelectionList<ListWidget.ListEntry> implements Retextured {
@@ -53,7 +53,7 @@ public class ListWidget extends ContainerObjectSelectionList<ListWidget.ListEntr
     }
 
     @Override
-    public ResourceLocation retexture(ResourceLocation oldTexture) {
+    public Identifier retexture(Identifier oldTexture) {
         return AyamePaperDoll.path(oldTexture.getPath());
     }
 

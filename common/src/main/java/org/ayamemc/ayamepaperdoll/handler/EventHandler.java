@@ -44,7 +44,7 @@ public class EventHandler {
         final Pose playerPose = player.getPose();
         if (
                 !minecraft.options.hideGui &&
-                        !(CONFIGS.hideUnderDebug.getValue() && minecraft.debugEntries.isF3Visible()) &&
+                        !(CONFIGS.hideUnderDebug.getValue() && minecraft.debugEntries.isOverlayVisible()) &&
                         (minecraft.screen == null || !CONFIGS.hideOnScreenOpen.getValue()) &&
                         !(minecraft.screen instanceof ConfigScreen) &&
                         !(minecraft.screen instanceof VisualConfigEditorScreen) &&

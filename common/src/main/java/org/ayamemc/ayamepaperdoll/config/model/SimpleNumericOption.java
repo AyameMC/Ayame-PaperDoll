@@ -20,7 +20,7 @@
 
 package org.ayamemc.ayamepaperdoll.config.model;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,7 +33,7 @@ public class SimpleNumericOption<T extends Number & Comparable<T>> extends Simpl
     @NotNull
     private final T max;
 
-    public SimpleNumericOption(ResourceLocation category, ResourceLocation id, @NotNull T defaultValue, @NotNull T min, @NotNull T max) {
+    public SimpleNumericOption(Identifier category, Identifier id, @NotNull T defaultValue, @NotNull T min, @NotNull T max) {
         super(category, id, defaultValue);
         this.min = min;
         this.max = max;

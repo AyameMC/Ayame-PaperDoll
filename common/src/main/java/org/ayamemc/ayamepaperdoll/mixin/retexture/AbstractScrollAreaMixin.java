@@ -25,7 +25,7 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractScrollArea;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.config.view.Retextured;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -36,13 +36,13 @@ public abstract class AbstractScrollAreaMixin {
      * This is an incomplete implementation. The background and separator/header/footer are untouched.
      */
     @WrapOperation(method = "renderScrollbar", at = {
-            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIII)V")
+            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V")
     })
-    public void drawTransparentTextFieldTexture(GuiGraphics instance, RenderPipeline renderPipeline, ResourceLocation resourceLocation, int i, int j, int k, int l, Operation<Void> original) {
+    public void drawTransparentTextFieldTexture(GuiGraphics instance, RenderPipeline renderPipeline, Identifier Identifier, int i, int j, int k, int l, Operation<Void> original) {
         if (this instanceof Retextured retextured) {
-            original.call(instance, renderPipeline, retextured.retexture(resourceLocation), i, j, k, l);
+            original.call(instance, renderPipeline, retextured.retexture(Identifier), i, j, k, l);
         } else {
-            original.call(instance, renderPipeline, resourceLocation, i, j, k, l);
+            original.call(instance, renderPipeline, Identifier, i, j, k, l);
         }
 
     }

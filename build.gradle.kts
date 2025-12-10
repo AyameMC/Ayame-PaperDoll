@@ -23,7 +23,7 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
     id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("dev.architectury.loom") version "1.11-SNAPSHOT" apply false
+    id("dev.architectury.loom") version "1.13-SNAPSHOT" apply false
     id("com.gradleup.shadow") version "9.2.2" apply false
     id("java")
     id("maven-publish")
@@ -68,16 +68,7 @@ subprojects {
     @Suppress("UnstableApiUsage")
     dependencies {
         "minecraft"("com.mojang:minecraft:${rootProject.findProperty("minecraft_version")}")
-        "mappings"(loom.layered {
-            officialMojangMappings()
-            parchment(
-                "org.parchmentmc.data:parchment-${rootProject.findProperty("parchment_minecraft_version")}:${
-                    rootProject.findProperty(
-                        "parchment_version"
-                    )
-                }@zip"
-            )
-        })
+        "mappings"(loom.officialMojangMappings())
     }
 
     tasks.withType<Jar> {
