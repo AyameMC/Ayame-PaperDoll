@@ -68,7 +68,16 @@ subprojects {
     @Suppress("UnstableApiUsage")
     dependencies {
         "minecraft"("com.mojang:minecraft:${rootProject.findProperty("minecraft_version")}")
-        "mappings"(loom.officialMojangMappings())
+        "mappings"(loom.layered {
+            officialMojangMappings()
+            parchment(
+                "org.parchmentmc.data:parchment-${rootProject.findProperty("parchment_minecraft_version")}:${
+                    rootProject.findProperty(
+                        "parchment_version"
+                    )
+                }@zip"
+            )
+        })
     }
 
     tasks.withType<Jar> {
