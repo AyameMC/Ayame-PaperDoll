@@ -25,21 +25,21 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractButton;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.config.view.Retextured;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
 @Mixin(AbstractButton.class)
 public abstract class AbstractButtonMixin {
-    @WrapOperation(method = "renderWidget", at = {
-            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/ResourceLocation;IIIII)V")
+    @WrapOperation(method = "renderDefaultSprite", at = {
+            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V")
     })
-    public void drawTransparentTextFieldTexture(GuiGraphics instance, RenderPipeline renderPipeline, ResourceLocation resourceLocation, int i, int j, int k, int l, int m, Operation<Void> original) {
+    public void drawTransparentTextFieldTexture(GuiGraphics instance, RenderPipeline renderPipeline, Identifier Identifier, int i, int j, int k, int l, int m, Operation<Void> original) {
         if (this instanceof Retextured retextured) {
-            original.call(instance, renderPipeline, retextured.retexture(resourceLocation), i, j, k, l, m);
+            original.call(instance, renderPipeline, retextured.retexture(Identifier), i, j, k, l, m);
         } else {
-            original.call(instance, renderPipeline, resourceLocation, i, j, k, l, m);
+            original.call(instance, renderPipeline, Identifier, i, j, k, l, m);
         }
 
     }

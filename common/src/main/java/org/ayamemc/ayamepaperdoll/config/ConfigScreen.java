@@ -32,7 +32,7 @@ import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.KeyEvent;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.ArrayUtils;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
@@ -92,7 +92,7 @@ public class ConfigScreen extends Screen {
 
     private Tab[] generateTabs() {
         var tabs = new ArrayList<Tab>();
-        var categoryLists = new HashMap<ResourceLocation, ListWidget>();
+        var categoryLists = new HashMap<Identifier, ListWidget>();
         for (var option : options) {
             if (option.getCategory().equals(Configs.HIDDEN_CATEGORY)) continue;
             var configEntryOptioal = ConfigWidgetRegistry.DEFAULT.getConfigEntry(option);

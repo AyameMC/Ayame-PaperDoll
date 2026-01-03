@@ -21,7 +21,7 @@
 package org.ayamemc.ayamepaperdoll.config.model;
 
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.jetbrains.annotations.NotNull;
 
@@ -33,15 +33,15 @@ import java.util.Objects;
 public class SimpleOption<T> implements ConfigOption<T> {
     @NotNull
     private final T defaultValue;
-    private final ResourceLocation category;
-    private final ResourceLocation id;
+    private final Identifier category;
+    private final Identifier id;
     private final Component name;
     private final Component description;
     private final Class<T> type;
     @NotNull
     private T value;
 
-    public SimpleOption(ResourceLocation category, ResourceLocation id, @NotNull T defaultValue) {
+    public SimpleOption(Identifier category, Identifier id, @NotNull T defaultValue) {
         this.category = category;
         this.id = id;
         this.name = Component.translatable("config.%s.option.%s".formatted(id.getNamespace(), id.getPath()));
@@ -83,12 +83,12 @@ public class SimpleOption<T> implements ConfigOption<T> {
     }
 
     @Override
-    public ResourceLocation getCategory() {
+    public Identifier getCategory() {
         return category;
     }
 
     @Override
-    public ResourceLocation getId() {
+    public Identifier getId() {
         return id;
     }
 

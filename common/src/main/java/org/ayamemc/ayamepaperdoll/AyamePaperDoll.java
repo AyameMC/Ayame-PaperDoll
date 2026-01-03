@@ -22,7 +22,7 @@ package org.ayamemc.ayamepaperdoll;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.KeyMapping;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.persistence.ConfigPersistence;
 import org.ayamemc.ayamepaperdoll.config.persistence.GsonConfigPersistence;
@@ -52,8 +52,8 @@ public final class AyamePaperDoll {
     public static final Configs CONFIGS = new Configs();
     public static final ConfigPersistence CONFIG_PERSISTENCE = new GsonConfigPersistence(Path.of("config/" + MOD_ID + "_v0.json"));
 
-    public static ResourceLocation path(String path) {
-        return ResourceLocation.fromNamespaceAndPath(MOD_ID, path);
+    public static Identifier path(String path) {
+        return Identifier.fromNamespaceAndPath(MOD_ID, path);
     }
 
     public static void init() {

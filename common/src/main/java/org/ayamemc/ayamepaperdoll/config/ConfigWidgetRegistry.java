@@ -27,7 +27,7 @@ import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.Mth;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.ayamemc.ayamepaperdoll.config.model.ConfigOption;
@@ -163,13 +163,13 @@ public class ConfigWidgetRegistry {
                                                            Function<U, ListWidget.ListEntry> widgetProvider) {
     }
 
-    public static class ConfigButton extends Button implements Retextured {
+    public static class ConfigButton extends Button.Plain implements Retextured {
         public ConfigButton(int width, int height, Component message, OnPress action) {
             super(0, 0, width, height, message, action, DEFAULT_NARRATION);
         }
 
         @Override
-        public ResourceLocation retexture(ResourceLocation oldTexture) {
+        public Identifier retexture(Identifier oldTexture) {
             return AyamePaperDoll.path(oldTexture.getPath());
         }
     }
@@ -180,7 +180,7 @@ public class ConfigWidgetRegistry {
         }
 
         @Override
-        public ResourceLocation retexture(ResourceLocation oldTexture) {
+        public Identifier retexture(Identifier oldTexture) {
             return AyamePaperDoll.path(oldTexture.getPath());
         }
     }
@@ -200,7 +200,7 @@ public class ConfigWidgetRegistry {
         }
 
         @Override
-        public ResourceLocation retexture(ResourceLocation oldTexture) {
+        public Identifier retexture(Identifier oldTexture) {
             return AyamePaperDoll.path(oldTexture.getPath());
         }
 
