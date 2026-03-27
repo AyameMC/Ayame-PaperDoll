@@ -5,8 +5,6 @@
     "minVersion": "0.8",
     "client": [
         "hud.GuiGraphicsExtractorMixin",
-        "patch.AbstractBoatRendererMixin",
-        "patch.BufferSourceMixin",
         "retexture.AbstractButtonMixin",
         "retexture.AbstractScrollAreaMixin",
         "retexture.AbstractSliderButtonMixin",

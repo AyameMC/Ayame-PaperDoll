@@ -20,8 +20,17 @@
 
 package org.ayamemc.ayamepaperdoll;
 
+import com.mojang.blaze3d.pipeline.BlendFunction;
+import com.mojang.blaze3d.pipeline.ColorTargetState;
+import com.mojang.blaze3d.pipeline.DepthStencilState;
+import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.blaze3d.platform.CompareOp;
 import com.mojang.blaze3d.platform.InputConstants;
+import com.mojang.blaze3d.shaders.UniformType;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
 import net.minecraft.client.KeyMapping;
+import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.persistence.ConfigPersistence;
@@ -36,7 +45,6 @@ public final class AyamePaperDoll {
     public static final String MOD_ID = "ayame_paperdoll";
     public static final String MOD_NAME = "Ayame PaperDoll";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
-    public static boolean identifier = false;
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(path("keys"));
     public static final KeyMapping SHOW_PAPERDOLL_KEY = new KeyMapping(
             "key.%s.showPaperDoll".formatted(MOD_ID),
@@ -48,7 +56,6 @@ public final class AyamePaperDoll {
             InputConstants.Type.KEYSYM,
             InputConstants.UNKNOWN.getValue(),
             CATEGORY);
-
     public static final Configs CONFIGS = new Configs();
     public static final ConfigPersistence CONFIG_PERSISTENCE = new GsonConfigPersistence(Path.of("config/" + MOD_ID + "_v0.json"));
 

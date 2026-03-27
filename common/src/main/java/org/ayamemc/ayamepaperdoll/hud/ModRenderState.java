@@ -31,13 +31,15 @@ public record ModRenderState(
         EntityRenderState renderState,
         Vector3f translation,
         Quaternionf rotation,
+        @Nullable EntityRenderState vehicleRenderState,
+        @Nullable Vector3f translation2,
+        Quaternionf rotation2,
         @Nullable Quaternionf overrideCameraAngle,
         int x0,
         int y0,
         int x1,
         int y1,
         float scale,
-        boolean boat,
         @Nullable ScreenRectangle scissorArea,
         @Nullable ScreenRectangle bounds
 ) implements PictureInPictureRenderState {
@@ -45,24 +47,28 @@ public record ModRenderState(
             EntityRenderState renderState,
             Vector3f translation,
             Quaternionf rotation,
+            @Nullable EntityRenderState vehicleRenderState,
+            @Nullable Vector3f translation2,
+            Quaternionf rotation2,
             @Nullable Quaternionf overrideCameraAngle,
             int x,
             int y,
             float scale,
-            boolean boat,
             @Nullable ScreenRectangle scissorArea
     ) {
         this(
                 renderState,
                 translation,
                 rotation,
+                vehicleRenderState,
+                translation2,
+                rotation2,
                 overrideCameraAngle,
                 x,
                 y,
                 x,
                 y,
                 scale,
-                boat,
                 scissorArea,
                 PictureInPictureRenderState.getBounds(x, y, x, y, scissorArea)
         );

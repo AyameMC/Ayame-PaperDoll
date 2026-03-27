@@ -21,11 +21,11 @@
 package org.ayamemc.ayamepaperdoll.hud;
 
 import com.google.common.collect.ImmutableList;
-import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.renderer.entity.state.BoatRenderState;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
@@ -36,17 +36,16 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.entity.vehicle.boat.Boat;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.Configs.RotationMode;
 import org.ayamemc.ayamepaperdoll.hud.DataBackup.DataBackupEntry;
 import org.ayamemc.ayamepaperdoll.mixininterface.GuiGraphicsExtractorInterface;
+import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.awt.geom.Rectangle2D;
 import java.util.List;
 
 import static org.ayamemc.ayamepaperdoll.AyamePaperDoll.CONFIGS;
@@ -80,7 +79,6 @@ public class PaperDollRenderer {
     );
     private static final PaperDollRenderer instance = new PaperDollRenderer();
     private final Minecraft minecraft = Minecraft.getInstance();
-    private Rectangle2D.Double currentRenderBounds;
 
     private PaperDollRenderer() {
     }
@@ -121,7 +119,7 @@ public class PaperDollRenderer {
     /**
      * Mimics the code in {@link InventoryScreen#extractEntityInInventoryFollowsMouse}
      */
-    public void render(GuiGraphicsExtractor graphics, float a) {
+    public void extractPaperdoll(GuiGraphicsExtractor graphics, float a) {
         if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll.getValue()) return;
         LivingEntity targetEntity = minecraft.level.players().stream().filter(p -> p.getName().getString().equals(CONFIGS.playerName.getValue())).findFirst().orElse(minecraft.player);
         if (CONFIGS.spectatorAutoSwitch.getValue() && minecraft.player.isSpectator()) {
@@ -133,8 +131,6 @@ public class PaperDollRenderer {
             }
         }
 
-        int scaledWidth = minecraft.getWindow().getGuiScaledWidth();
-        int scaledHeight = minecraft.getWindow().getGuiScaledHeight();
         Configs.PoseOffsetMethod poseOffsetMethod = CONFIGS.poseOffsetMethod.getValue();
 
         var backup = new DataBackup<>(targetEntity, LIVINGENTITY_BACKUP_ENTRIES);
@@ -142,6 +138,8 @@ public class PaperDollRenderer {
 
         transformEntity(targetEntity, a, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
 
+        EntityRenderState vehicleRenderState = null;
+        Vector3f vehicleOffset = null;
         DataBackup<LivingEntity> vehicleBackup = null;
         if (CONFIGS.renderVehicle.getValue() && poseOffsetMethod != Configs.PoseOffsetMethod.FORCE_STANDING && targetEntity.isPassenger()) {
             var vehicle = targetEntity.getVehicle();
@@ -157,26 +155,20 @@ public class PaperDollRenderer {
                 transformEntity(livingVehicle, a, false);
             }
 
-            performRendering(vehicle,
-                    CONFIGS.offsetX.getValue() * scaledWidth,
-                    CONFIGS.offsetY.getValue() * scaledHeight,
-                    CONFIGS.size.getValue() * scaledHeight,
-                    true,
-                    vehicle.getPosition(a).subtract(targetEntity.getPosition(a))
-                            .yRot((float) Math.toRadians(yawLerped+180)).toVector3f(), // undo the rotation
-                    CONFIGS.lightDegree.getValue(),
-                    a, graphics);
+            vehicleRenderState = extractRenderState(vehicle, a);
+            vehicleOffset = vehicle.getPosition(a).subtract(targetEntity.getPosition(a))
+                    .yRot((float) Math.toRadians(yawLerped+180)).toVector3f();// undo the rotation
         }
 
+        var targetRenderState = extractRenderState(targetEntity, a);
 
-        performRendering(targetEntity,
-                CONFIGS.offsetX.getValue() * scaledWidth,
-                CONFIGS.offsetY.getValue() * scaledHeight,
-                CONFIGS.size.getValue() * scaledHeight,
-                false,
+        extractPaperdoll(
+                graphics,
+                targetRenderState,
                 new Vector3f(0, (float) getPoseOffsetY(targetEntity, a, poseOffsetMethod), 0),
-                CONFIGS.lightDegree.getValue(),
-                a, graphics);
+                vehicleRenderState,
+                vehicleOffset
+        );
 
         if (vehicleBackup != null) vehicleBackup.restore();
 
@@ -271,17 +263,15 @@ public class PaperDollRenderer {
         targetEntity.setSharedFlag(0, false);
     }
 
-    private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean boat,
-                                  Vector3f offset, double lightDegree, float partialTicks, GuiGraphicsExtractor GuiGraphicsExtractor) {
-        // 其余渲染逻辑保持不变...
-        EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
+    private void extractPaperdoll(GuiGraphicsExtractor graphics, EntityRenderState target, Vector3f offset,
+                                  @Nullable EntityRenderState vehicle, @Nullable Vector3f offset2) {
+        var scaledWidth = minecraft.getWindow().getGuiScaledWidth();
+        var scaledHeight = minecraft.getWindow().getGuiScaledHeight();
 
-        EntityRenderer<? super Entity, ?> entityRenderer = entityRenderDispatcher.getRenderer(targetEntity);
-
-        EntityRenderState state = entityRenderer.createRenderState(targetEntity, partialTicks);
-        state.lightCoords =getLight(targetEntity,partialTicks);
-        state.shadowPieces.clear();
-        state.outlineColor = 0;
+        var posX = CONFIGS.offsetX.getValue() * scaledWidth;
+        var posY = CONFIGS.offsetY.getValue() * scaledHeight;
+        var size = CONFIGS.size.getValue() * scaledHeight;
+        var lightDegree = CONFIGS.lightDegree.getValue();
 
         Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI).rotateY((float) Math.PI);
         Quaternionf configRot = new Quaternionf().rotateXYZ(
@@ -291,29 +281,40 @@ public class PaperDollRenderer {
 
         pose.mul(configRot).rotateY((float) Math.toRadians(lightDegree + 180));
 
-        if (targetEntity instanceof Boat) {
-            pose.rotateY((float) Math.toRadians(180));
+        var pose1 = new Quaternionf(pose);
+        if(target instanceof BoatRenderState) {
+            pose1.rotateY((float) Math.toRadians(180));
         }
-        ((GuiGraphicsExtractorInterface)GuiGraphicsExtractor).addPicturesInPictureState(
-                state,
-                offset,
-                pose,
-                new Quaternionf(configRot).conjugate(),
-                (int) posX,
-                (int) posY,
-                (float) size,
-                boat
+        if(vehicle instanceof BoatRenderState boat){
+            pose.rotateY((float) Math.toRadians(180));
+            if(PaperDollRenderer.shouldLockRotationYaw()){
+                boat.yRot = 0;
+            }
+        }
+
+        // different renderState, offset, pose; same rotation, pos, size
+        ((GuiGraphicsExtractorInterface)graphics).addPicturesInPictureState(
+                new ModRenderState(
+                        target,
+                        offset,
+                        pose1,
+                        vehicle,
+                        offset2,
+                        pose,
+                        new Quaternionf(configRot).conjugate(),
+                        (int) posX, (int) posY,(float) size, null
+                )
         );
     }
 
-
-    public Rectangle2D.Double getRenderBounds() {
-        return this.currentRenderBounds;
-    }
-
-    public interface LockedPaperDoll {
-    }
-
-    public static class PaperDollPoseStack extends PoseStack implements LockedPaperDoll {
+    //also check =InventoryScreen#extractRenderState
+    private EntityRenderState extractRenderState(Entity targetEntity, float a){
+        EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
+        EntityRenderer<? super Entity, ?> entityRenderer = entityRenderDispatcher.getRenderer(targetEntity);
+        EntityRenderState state = entityRenderer.createRenderState(targetEntity, a);
+        state.lightCoords = getLight(targetEntity, a);
+        state.shadowPieces.clear();
+        state.outlineColor = 0;
+        return state;
     }
 }

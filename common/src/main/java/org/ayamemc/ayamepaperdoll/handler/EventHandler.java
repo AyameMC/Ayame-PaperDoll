@@ -53,7 +53,7 @@ public class EventHandler {
 
 
         ) {
-            paperDollRenderer.render(graphics, deltaTracker.getGameTimeDeltaPartialTick(true));
+            paperDollRenderer.extractPaperdoll(graphics, deltaTracker.getGameTimeDeltaPartialTick(true));
         }
     }
 

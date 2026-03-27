@@ -55,7 +55,7 @@ public class VisualConfigEditorScreen extends Screen {
         graphics.verticalLine((width - BORDER_MARGIN), -1, height, LINE_COLOR);
         // 右边的线
         graphics.verticalLine(BORDER_MARGIN, -1, height, LINE_COLOR);
-        paperDollRenderer.render(graphics, a);
+        paperDollRenderer.extractPaperdoll(graphics, a);
     }
 
 
