@@ -31,4 +31,4 @@ rootProject.name = "Ayame-PaperDoll"
 
 include("common")
 include("fabric")
-include("neoforge")
+//include("neoforge")

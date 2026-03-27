@@ -25,8 +25,8 @@ import org.jetbrains.annotations.Nullable;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-public interface GuiGraphicsInterface {
-    void submitModeRenderState(
+public interface GuiGraphicsExtractorInterface {
+    void addPicturesInPictureState(
             EntityRenderState renderState,
             Vector3f translation,
             Quaternionf rotation,

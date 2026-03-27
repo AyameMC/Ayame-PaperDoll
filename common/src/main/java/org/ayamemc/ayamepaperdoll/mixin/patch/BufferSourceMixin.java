@@ -36,6 +36,7 @@ public class BufferSourceMixin {
             at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/MultiBufferSource$BufferSource;endBatch(Lnet/minecraft/client/renderer/rendertype/RenderType;Lcom/mojang/blaze3d/vertex/BufferBuilder;)V"))
     void disableCulling(MultiBufferSource.BufferSource instance, RenderType layer, BufferBuilder builder, Operation<Void> original) {
         if (AyamePaperDoll.identifier) {
+            //todo: avoid raw opengl call
             GL11.glFrontFace(GL11.GL_CW);
             original.call(instance, layer, builder);
             GL11.glFrontFace(GL11.GL_CCW);

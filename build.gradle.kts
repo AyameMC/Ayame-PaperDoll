@@ -22,8 +22,8 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 
 plugins {
-    id("architectury-plugin") version "3.4-SNAPSHOT"
-    id("dev.architectury.loom") version "1.13-SNAPSHOT" apply false
+    id("architectury-plugin") version "3.5-SNAPSHOT"
+    id("dev.architectury.loom-no-remap") version "1.14-SNAPSHOT" apply false
     id("com.gradleup.shadow") version "9.2.2" apply false
     id("java")
     id("maven-publish")
@@ -54,30 +54,15 @@ allprojects {
 }
 
 subprojects {
-    apply(plugin = "dev.architectury.loom")
+    apply(plugin = "dev.architectury.loom-no-remap")
     apply(plugin = "maven-publish")
 
     base {
         archivesName = "${rootProject.findProperty("mod_archives_name")}-${project.name}"
     }
 
-
-    val loom = project.extensions.getByName<LoomGradleExtensionAPI>("loom")
-    loom.silentMojangMappingsLicense()
-
-    @Suppress("UnstableApiUsage")
     dependencies {
         "minecraft"("com.mojang:minecraft:${rootProject.findProperty("minecraft_version")}")
-        "mappings"(loom.layered {
-            officialMojangMappings()
-            parchment(
-                "org.parchmentmc.data:parchment-${rootProject.findProperty("parchment_minecraft_version")}:${
-                    rootProject.findProperty(
-                        "parchment_version"
-                    )
-                }@zip"
-            )
-        })
     }
 
     tasks.withType<Jar> {
@@ -94,7 +79,7 @@ subprojects {
     }
 
     tasks.withType<JavaCompile>().configureEach {
-        options.release.set(21)
+        options.release.set(25)
     }
 
     publishing {

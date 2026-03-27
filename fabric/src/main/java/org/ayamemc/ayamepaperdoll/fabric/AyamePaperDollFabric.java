@@ -22,8 +22,8 @@ package org.ayamemc.ayamepaperdoll.fabric;
 
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.SpecialGuiElementRegistry;
+import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
+import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
@@ -35,10 +35,10 @@ public class AyamePaperDollFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // Run our Fabric setup.
-        CommonInterfaceInstances.keyHelper = KeyBindingHelper::getBoundKeyOf;
+        CommonInterfaceInstances.keyHelper = KeyMappingHelper::getBoundKeyOf;
 
-        KeyBindingHelper.registerKeyBinding(AyamePaperDoll.SHOW_PAPERDOLL_KEY);
-        KeyBindingHelper.registerKeyBinding(AyamePaperDoll.OPEN_CONFIG_GUI);
+        KeyMappingHelper.registerKeyMapping(AyamePaperDoll.SHOW_PAPERDOLL_KEY);
+        KeyMappingHelper.registerKeyMapping(AyamePaperDoll.OPEN_CONFIG_GUI);
 
         AyamePaperDoll.init();
 
@@ -51,8 +51,8 @@ public class AyamePaperDollFabric implements ClientModInitializer {
                 AyamePaperDoll.path("ayame_paperdoll_renderer_layer_after_misc_overlays"),
                 EventHandler::renderPaperDoll
         );
-        SpecialGuiElementRegistry.register((context -> new ModRenderer(
-                context.vertexConsumers(),context.client().getEntityRenderDispatcher()
-        )));
+        PictureInPictureRendererRegistry.register(context -> new ModRenderer(
+                context.bufferSource(), context.minecraft().getEntityRenderDispatcher()
+        ));
     }
 }

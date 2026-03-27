@@ -22,7 +22,7 @@ package org.ayamemc.ayamepaperdoll.config;
 
 import com.google.common.collect.ImmutableList;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.*;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -268,13 +268,13 @@ public class ConfigWidgetRegistry {
         }
 
         @Override
-        public void renderContent(GuiGraphics guiGraphics, int mouseX, int mouseY, boolean hovered, float tickDelta) {
+        public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
             label.setPosition(getContentX(), getContentY() + LABEL_Y_OFFSET);
             reset.setPosition(getContentX() + getContentWidth() - reset.getWidth(), getContentY());
             widget.setPosition(getContentX()+ getContentWidth() - reset.getWidth() - widget.getWidth() - GAP_WIDTH,getContentY());
-            widget.render(guiGraphics, mouseX, mouseY, tickDelta);
-            reset.render(guiGraphics, mouseX, mouseY, tickDelta);
-            label.render(guiGraphics, mouseX, mouseY, tickDelta);
+            widget.extractRenderState(graphics, mouseX, mouseY, a);
+            reset.extractRenderState(graphics, mouseX, mouseY, a);
+            label.extractRenderState(graphics, mouseX, mouseY, a);
         }
     }
 

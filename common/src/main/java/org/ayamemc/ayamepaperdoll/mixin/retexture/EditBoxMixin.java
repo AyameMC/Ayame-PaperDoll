@@ -23,7 +23,7 @@ package org.ayamemc.ayamepaperdoll.mixin.retexture;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.mojang.blaze3d.pipeline.RenderPipeline;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
@@ -39,19 +39,19 @@ public abstract class EditBoxMixin extends AbstractWidget {
         super(x, y, width, height, message);
     }
 
-    @WrapOperation(method = "renderWidget", at = {
-            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphics;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V")
+    @WrapOperation(method = "extractWidgetRenderState", at = {
+            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V")
     })
-    public void drawTransparentTextFieldTexture(GuiGraphics instance, RenderPipeline renderPipeline, Identifier Identifier, int i, int j, int k, int l, Operation<Void> original) {
+    public void drawTransparentTextFieldTexture(GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier location, int x, int y, int width, int height, Operation<Void> original) {
         if (this instanceof Retextured retextured) {
             int color = ARGB.white(this.alpha);
 
 //            RenderSystem.enableBlend();
 //            RenderSystem.enableDepthTest();
 
-            instance.blitSprite(renderPipeline, retextured.retexture(Identifier), i, j, k, l, color);
+            instance.blitSprite(renderPipeline, retextured.retexture(location), x, y, width, height, color);
         } else {
-            original.call(instance, renderPipeline, Identifier, i, j, k, l);
+            original.call(instance, renderPipeline, location, x, y, width, height);
         }
     }
 }

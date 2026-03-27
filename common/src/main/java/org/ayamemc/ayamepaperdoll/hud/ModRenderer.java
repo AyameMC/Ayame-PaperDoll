@@ -26,12 +26,13 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.renderer.ProjectionMatrixBuffer;
+import net.minecraft.client.renderer.Projection;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -40,10 +41,9 @@ import org.joml.Vector3f;
 import static org.ayamemc.ayamepaperdoll.AyamePaperDoll.CONFIGS;
 
 public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
-    private final CachedOrthoProjectionMatrixBuffer projectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer(
-            "PIP - " + this.getClass().getSimpleName(), -1000.0F, 1000.0F, true
-    );
+    private final ProjectionMatrixBuffer projectionMatrixBuffer = new ProjectionMatrixBuffer("PIP - " + this.getClass().getSimpleName());
     private final EntityRenderDispatcher entityRenderDispatcher;
+    private final Projection projection = new Projection();
 
     public ModRenderer(MultiBufferSource.BufferSource bufferSource, EntityRenderDispatcher entityRenderDispatcher) {
         super(bufferSource);
@@ -79,11 +79,9 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
     @Override
     public void prepare(ModRenderState renderState, GuiRenderState guiRenderState, int guiScale) {
         AyamePaperDoll.identifier=CONFIGS.mirrored.getValue();
-        RenderSystem.setProjectionMatrix(
-                this.projectionMatrixBuffer.getBuffer(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-                        Minecraft.getInstance().getWindow().getGuiScaledHeight()),
-                ProjectionType.ORTHOGRAPHIC);
-
+        this.projection.setupOrtho(-1000.0F, 1000.0F, Minecraft.getInstance().getWindow().getGuiScaledWidth(),
+                Minecraft.getInstance().getWindow().getGuiScaledHeight(), true);
+        RenderSystem.setProjectionMatrix(this.projectionMatrixBuffer.getBuffer(this.projection), ProjectionType.ORTHOGRAPHIC);
         PoseStack posestack = renderState.boat()?new PaperDollRenderer.PaperDollPoseStack():new PoseStack();
         posestack.translate(renderState.x0(), renderState.y0(), 0.0F);
         posestack.scale(CONFIGS.mirrored.getValue()?-1.0f:1.0f, 1.0f, -1.0f);

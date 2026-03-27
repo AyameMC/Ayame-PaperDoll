@@ -20,7 +20,7 @@
 
 package org.ayamemc.ayamepaperdoll.config;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
@@ -95,8 +95,8 @@ public class ConfigScreen extends Screen {
         var categoryLists = new HashMap<Identifier, ListWidget>();
         for (var option : options) {
             if (option.getCategory().equals(Configs.HIDDEN_CATEGORY)) continue;
-            var configEntryOptioal = ConfigWidgetRegistry.DEFAULT.getConfigEntry(option);
-            if (configEntryOptioal.isEmpty()) {
+            var configEntryOptional = ConfigWidgetRegistry.DEFAULT.getConfigEntry(option);
+            if (configEntryOptional.isEmpty()) {
                 AyamePaperDoll.LOGGER.error("Could not find widget for option {}", option.getId());
                 continue;
             }
@@ -113,7 +113,7 @@ public class ConfigScreen extends Screen {
                 tabs.add(tab);
                 categoryLists.put(category, list);
             }
-            categoryLists.get(category).addEntry(configEntryOptioal.get());
+            categoryLists.get(category).addEntry(configEntryOptional.get());
 
             if (option.getId().equals(AyamePaperDoll.path("display_paperdoll"))) {
                 categoryLists.get(category).addEntry(this.getPresetsConfigEntry());
@@ -131,7 +131,7 @@ public class ConfigScreen extends Screen {
     protected void repositionElements() {
         if (this.tabNav == null) return;
 
-        this.tabNav.setWidth(this.width);
+        this.tabNav.updateWidth(this.width);
         this.tabNav.arrangeElements();
         for (var listWidget : this.listWidgets) {
             listWidget.setSize(this.width, this.height - TAB_BUTTON_HEIGHT);
@@ -151,22 +151,22 @@ public class ConfigScreen extends Screen {
 
     @SuppressWarnings("DataFlowIssue")
     @Override
-    protected void renderBlurredBackground(GuiGraphics guiGraphics) {
+    protected void extractBlurredBackground(final GuiGraphicsExtractor graphics) {
         if (minecraft.level == null || !AyamePaperDoll.CONFIGS.disableConfigScreenBlur.getValue()) {
-            super.renderBlurredBackground(guiGraphics);
+            super.extractBlurredBackground(graphics);
         }
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float delta) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         // only render when the screen is opened in game
         //noinspection DataFlowIssue
         if (this.minecraft.level != null) {
-            this.previewHud.render(this.minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(true), guiGraphics);
+            this.previewHud.render(graphics, this.minecraft.getDeltaTracker().getGameTimeDeltaPartialTick(true));
             // put behind GUI
-            guiGraphics.pose().translate(0,0);
+            graphics.pose().translate(0,0);
         }
-        super.render(guiGraphics, mouseX, mouseY, delta);
+        super.extractRenderState(graphics, mouseX, mouseY, a);
     }
 
     @Override
@@ -205,14 +205,14 @@ public class ConfigScreen extends Screen {
             }
 
             @Override
-            public void renderContent(GuiGraphics context, int i, int j,boolean hovered, float tickDelta) {
+            public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
                 presetLabel.setPosition(getContentX(), getContentY() + labelYOffset);
                 topLeft.setPosition(getContentX() + getContentWidth() - buttonWidth * 4 - gap * 3, getContentY());
                 topRight.setPosition(getContentX() + getContentWidth() - buttonWidth * 3 - gap * 2, getContentY());
                 bottomLeft.setPosition(getContentX() + getContentWidth() - buttonWidth * 2 - gap, getContentY());
                 bottomRight.setPosition(getContentX() + getContentWidth() - buttonWidth, getContentY());
 
-                for (AbstractWidget child : children) child.render(context, i,j, tickDelta);
+                for (AbstractWidget child : children) child.extractRenderState(graphics, mouseX, mouseY, a);
             }
         };
     }
@@ -233,10 +233,10 @@ public class ConfigScreen extends Screen {
         var children = List.of(visualConfigEditorButton);
         return new ListWidget.ListEntry() {
             @Override
-            public void renderContent(GuiGraphics guiGraphics, int i, int j, boolean bl, float f) {
+            public void extractContent(GuiGraphicsExtractor graphics, int mouseX, int mouseY, boolean hovered, float a) {
                 visualConfigEditorButton.setPosition((getContentX()+ getContentWidth() - buttonWidth) / 2, getContentY());
 
-                for (AbstractWidget child : children) child.render(guiGraphics, i, j, f);
+                for (AbstractWidget child : children) child.extractRenderState(graphics, mouseX, mouseY, a);
             }
 
             @Override

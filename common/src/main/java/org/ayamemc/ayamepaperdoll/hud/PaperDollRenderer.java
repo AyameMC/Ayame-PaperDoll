@@ -23,10 +23,10 @@ package org.ayamemc.ayamepaperdoll.hud;
 import com.google.common.collect.ImmutableList;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.LightTexture;
+import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.state.EntityRenderState;
@@ -42,7 +42,7 @@ import net.minecraft.world.level.LightLayer;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.Configs.RotationMode;
 import org.ayamemc.ayamepaperdoll.hud.DataBackup.DataBackupEntry;
-import org.ayamemc.ayamepaperdoll.mixininterface.GuiGraphicsInterface;
+import org.ayamemc.ayamepaperdoll.mixininterface.GuiGraphicsExtractorInterface;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -98,9 +98,9 @@ public class PaperDollRenderer {
             int min = CONFIGS.worldLightMin.getValue();
             blockLight = Mth.clamp(blockLight, min, 15);
             skyLight = Mth.clamp(skyLight, min, 15);
-            return LightTexture.pack(blockLight, skyLight);
+            return LightCoordsUtil.pack(blockLight, skyLight);
         }
-        return LightTexture.pack(15, 15);
+        return LightCoordsUtil.pack(15, 15);
     }
 
     private static float getFallFlyingLeaning(LivingEntity entity, float partialTicks) {
@@ -119,9 +119,9 @@ public class PaperDollRenderer {
     // guiGraphics.pose().translate(0, 0, 200);
 
     /**
-     * Mimics the code in {@link InventoryScreen#renderEntityInInventoryFollowsMouse}
+     * Mimics the code in {@link InventoryScreen#extractEntityInInventoryFollowsMouse}
      */
-    public void render(float partialTicks, GuiGraphics guiGraphics) {
+    public void render(GuiGraphicsExtractor graphics, float a) {
         if (minecraft.level == null || minecraft.player == null || !CONFIGS.displayPaperDoll.getValue()) return;
         LivingEntity targetEntity = minecraft.level.players().stream().filter(p -> p.getName().getString().equals(CONFIGS.playerName.getValue())).findFirst().orElse(minecraft.player);
         if (CONFIGS.spectatorAutoSwitch.getValue() && minecraft.player.isSpectator()) {
@@ -140,7 +140,7 @@ public class PaperDollRenderer {
         var backup = new DataBackup<>(targetEntity, LIVINGENTITY_BACKUP_ENTRIES);
         backup.save();
 
-        transformEntity(targetEntity, partialTicks, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
+        transformEntity(targetEntity, a, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
 
         DataBackup<LivingEntity> vehicleBackup = null;
         if (CONFIGS.renderVehicle.getValue() && poseOffsetMethod != Configs.PoseOffsetMethod.FORCE_STANDING && targetEntity.isPassenger()) {
@@ -148,13 +148,13 @@ public class PaperDollRenderer {
             assert vehicle != null;
 
             // get the overall yaw before transforming
-            var yawLerped = vehicle.getViewYRot(partialTicks);
+            var yawLerped = vehicle.getViewYRot(a);
 
             // FIXME: NEVERFIX - the rendered yaw of minecart is determined non-trivially in its MinecartEntityRenderer#render, so it cannot be fixed to 0 easily
             if (vehicle instanceof LivingEntity livingVehicle) {
                 vehicleBackup = new DataBackup<>(livingVehicle, LIVINGENTITY_BACKUP_ENTRIES);
                 vehicleBackup.save();
-                transformEntity(livingVehicle, partialTicks, false);
+                transformEntity(livingVehicle, a, false);
             }
 
             performRendering(vehicle,
@@ -162,10 +162,10 @@ public class PaperDollRenderer {
                     CONFIGS.offsetY.getValue() * scaledHeight,
                     CONFIGS.size.getValue() * scaledHeight,
                     true,
-                    vehicle.getPosition(partialTicks).subtract(targetEntity.getPosition(partialTicks))
+                    vehicle.getPosition(a).subtract(targetEntity.getPosition(a))
                             .yRot((float) Math.toRadians(yawLerped+180)).toVector3f(), // undo the rotation
                     CONFIGS.lightDegree.getValue(),
-                    partialTicks, guiGraphics);
+                    a, graphics);
         }
 
 
@@ -174,9 +174,9 @@ public class PaperDollRenderer {
                 CONFIGS.offsetY.getValue() * scaledHeight,
                 CONFIGS.size.getValue() * scaledHeight,
                 false,
-                new Vector3f(0, (float) getPoseOffsetY(targetEntity, partialTicks, poseOffsetMethod), 0),
+                new Vector3f(0, (float) getPoseOffsetY(targetEntity, a, poseOffsetMethod), 0),
                 CONFIGS.lightDegree.getValue(),
-                partialTicks, guiGraphics);
+                a, graphics);
 
         if (vehicleBackup != null) vehicleBackup.restore();
 
@@ -272,7 +272,7 @@ public class PaperDollRenderer {
     }
 
     private void performRendering(Entity targetEntity, double posX, double posY, double size, boolean boat,
-                                  Vector3f offset, double lightDegree, float partialTicks, GuiGraphics guiGraphics) {
+                                  Vector3f offset, double lightDegree, float partialTicks, GuiGraphicsExtractor GuiGraphicsExtractor) {
         // 其余渲染逻辑保持不变...
         EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
 
@@ -294,7 +294,7 @@ public class PaperDollRenderer {
         if (targetEntity instanceof Boat) {
             pose.rotateY((float) Math.toRadians(180));
         }
-        ((GuiGraphicsInterface)guiGraphics).submitModeRenderState(
+        ((GuiGraphicsExtractorInterface)GuiGraphicsExtractor).addPicturesInPictureState(
                 state,
                 offset,
                 pose,
