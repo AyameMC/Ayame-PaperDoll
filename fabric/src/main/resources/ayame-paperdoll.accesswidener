@@ -1,0 +1,11 @@
+accessWidener v2 official
+accessible field net/minecraft/world/entity/LivingEntity swimAmount F
+accessible field net/minecraft/world/entity/LivingEntity swimAmountO F
+accessible field net/minecraft/world/entity/Entity vehicle Lnet/minecraft/world/entity/Entity;
+accessible field net/minecraft/world/entity/LivingEntity fallFlyTicks I
+accessible field net/minecraft/client/player/LocalPlayer crouching Z
+accessible field net/minecraft/client/gui/render/pip/PictureInPictureRenderer textureView Lcom/mojang/blaze3d/textures/GpuTextureView;
+accessible field net/minecraft/client/gui/render/pip/PictureInPictureRenderer depthTextureView Lcom/mojang/blaze3d/textures/GpuTextureView;
+accessible method net/minecraft/world/entity/Entity setSharedFlag (IZ)V
+accessible method net/minecraft/world/entity/Entity getSharedFlag (I)Z
+accessible method net/minecraft/client/gui/render/pip/PictureInPictureRenderer prepareTexturesAndProjection (ZII)V

@@ -20,10 +20,8 @@
 
 package org.ayamemc.ayamepaperdoll.neoforge;
 
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -73,8 +71,8 @@ public final class AyamePaperDollNeoForge {
     }
 
     private static void renderPaperDoll(RenderGuiEvent.Pre event) {
-        final GuiGraphics guiGraphics = event.getGuiGraphics();
-        final DeltaTracker partialTick = event.getPartialTick();
+        final var guiGraphics = event.getGuiGraphics();
+        final var partialTick = event.getPartialTick();
         EventHandler.renderPaperDoll(guiGraphics, partialTick);
     }
 
