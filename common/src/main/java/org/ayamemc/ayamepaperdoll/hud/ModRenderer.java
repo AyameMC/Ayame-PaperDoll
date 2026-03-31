@@ -41,6 +41,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
 import net.minecraft.client.renderer.state.level.CameraRenderState;
+import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -131,16 +132,18 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
             u0 = 0.0f;
             u1 = 1.0f;
         }
-        guiRenderState.addBlitToCurrentLayer(
-                new BlitRenderState(
-                        RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA,
-                        TextureSetup.singleTexture(this.textureView, RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST)),
+        guiRenderState.addGlyphToCurrentLayer(
+                new ExBlitRenderState(
+                        AyamePaperDoll.MOD_PIPELINE,
+                        new TextureSetup(
+                                this.textureView, null, Minecraft.getInstance().gameRenderer.levelLightmap(), RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST), null, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR)
+                        ),
                         renderState.pose(),
                         0,0, width, height,
                         u0,u1,
                         1.0F,
                         0.0F,
-                        -1,
+                        renderState.renderState().lightCoords,
                         renderState.scissorArea(),
                         null
                 )
