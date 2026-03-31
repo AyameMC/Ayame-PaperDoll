@@ -20,17 +20,13 @@
 
 package org.ayamemc.ayamepaperdoll.fabric;
 
-import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keymapping.v1.KeyMappingHelper;
-import net.fabricmc.fabric.api.client.rendering.v1.FabricRenderPipeline;
 import net.fabricmc.fabric.api.client.rendering.v1.PictureInPictureRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
-import net.minecraft.client.renderer.RenderPipelines;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
-import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
 import org.ayamemc.ayamepaperdoll.hud.ModRenderer;
 
@@ -38,8 +34,6 @@ public class AyamePaperDollFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         // Run our Fabric setup.
-        CommonInterfaceInstances.keyHelper = KeyMappingHelper::getBoundKeyOf;
-
         KeyMappingHelper.registerKeyMapping(AyamePaperDoll.SHOW_PAPERDOLL_KEY);
         KeyMappingHelper.registerKeyMapping(AyamePaperDoll.OPEN_CONFIG_GUI);
 

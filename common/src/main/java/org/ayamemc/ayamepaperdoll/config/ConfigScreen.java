@@ -35,7 +35,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import org.apache.commons.lang3.ArrayUtils;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
-import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.config.model.ConfigOption;
 import org.ayamemc.ayamepaperdoll.config.view.ListWidget;
 import org.ayamemc.ayamepaperdoll.config.view.Tab;
@@ -176,7 +175,7 @@ public class ConfigScreen extends Screen {
 
     @Override
     public boolean keyPressed(KeyEvent keyEvent) {
-        if (keyEvent.key() == CommonInterfaceInstances.keyHelper.getBoundKeyOf(AyamePaperDoll.OPEN_CONFIG_GUI).getValue() && this.shouldCloseOnEsc()) {
+        if (AyamePaperDoll.OPEN_CONFIG_GUI.matches(keyEvent)) {
             this.onClose();
             return true;
         }

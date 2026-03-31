@@ -34,7 +34,6 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
-import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.config.ConfigScreen;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
 import org.ayamemc.ayamepaperdoll.hud.ModRenderState;
@@ -44,8 +43,6 @@ import org.ayamemc.ayamepaperdoll.hud.ModRenderer;
 public final class AyamePaperDollNeoForge {
     public AyamePaperDollNeoForge(IEventBus modBus) {
         // Run our NeoForge setup.
-        CommonInterfaceInstances.keyHelper = KeyMapping::getKey;
-
         AyamePaperDoll.init();
 
         modBus.addListener(AyamePaperDollNeoForge::registerKeyMapping);
