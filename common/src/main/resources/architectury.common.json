@@ -1,7 +1,7 @@
 {
   "accessWidener": "ayame-paperdoll.accesswidener",
   "injected_interfaces": {
-    "net/minecraft/class_1297": [
+    "net/minecraft/world/entity/Entity": [
       "org/ayamemc/ayamepaperdoll/mixininterface/EntityMixinInterface"
     ]
   }

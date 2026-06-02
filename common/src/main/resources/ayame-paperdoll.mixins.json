@@ -4,9 +4,7 @@
     "compatibilityLevel": "JAVA_21",
     "minVersion": "0.8",
     "client": [
-        "hud.GuiGraphicsMixin",
-        "patch.AbstractBoatRendererMixin",
-        "patch.BufferSourceMixin",
+        "hud.GuiGraphicsExtractorMixin",
         "retexture.AbstractButtonMixin",
         "retexture.AbstractScrollAreaMixin",
         "retexture.AbstractSliderButtonMixin",

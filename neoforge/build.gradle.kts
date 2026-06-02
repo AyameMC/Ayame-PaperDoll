@@ -31,24 +31,18 @@ loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
 }
 
-configurations {
-    create("common") {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-    }
-    named("compileClasspath") {
-        extendsFrom(configurations["common"])
-    }
-    named("runtimeClasspath") {
-        extendsFrom(configurations["common"])
-    }
-    named("developmentNeoForge") {
-        extendsFrom(configurations["common"])
-    }
-    create("shadowBundle") {
-        isCanBeResolved = true
-        isCanBeConsumed = false
-    }
+val common by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
+}
+
+configurations.named("compileClasspath") { extendsFrom(common) }
+configurations.named("runtimeClasspath") { extendsFrom(common) }
+configurations.named("developmentNeoForge") { extendsFrom(common) }
+
+val shadowBundle by configurations.creating {
+    isCanBeResolved = true
+    isCanBeConsumed = false
 }
 
 repositories {
@@ -61,17 +55,14 @@ repositories {
 dependencies {
     add("neoForge", "net.neoforged:neoforge:${rootProject.extra["neoforge_version"]}")
 
-    val commonDep = project(path = ":common", configuration = "namedElements")
-    add("common", commonDep)
-    configurations.named("common") {
-        withDependencies {
-            find { it == commonDep }?.let {
-                (it as? ModuleDependency)?.isTransitive = false
-            }
-        }
-    }
+    common(project(path = ":common")) { isTransitive = false }
 
-    add("shadowBundle", project(path = ":common", configuration = "transformProductionNeoForge"))
+    shadowBundle(
+        project(
+            path = ":common",
+            configuration = "transformProductionNeoForge"
+        )
+    ) { isTransitive = false }
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -97,22 +88,26 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-tasks.named<Jar>("sourcesJar") {
-    val commonSources = project(":common").tasks.named<Jar>("sourcesJar")
-    dependsOn(commonSources)
-    from(commonSources.map { zipTree(it.archiveFile) })
-    archiveClassifier.set("sources")
+tasks.named<Jar>("jar") {
+    archiveClassifier.set("raw")
 }
+
+configurations {
+    apiElements {
+        outgoing.artifacts.clear()
+        outgoing.artifact((tasks.named("shadowJar")))
+    }
+    runtimeElements {
+        outgoing.artifacts.clear()
+        outgoing.artifact((tasks.named("shadowJar")))
+    }
+}
+
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
-    configurations = listOf(project.configurations["shadowBundle"])
-    archiveClassifier.set("dev-shadow")
-}
+    dependsOn((tasks.named("jar")))
+    configurations = listOf(shadowBundle)
+    archiveClassifier.set(null as String?)
 
-tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
-    dependsOn("shadowJar")
-    val shadowJarTask = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar")
-    inputFile.set(shadowJarTask.get().archiveFile)
-    injectAccessWidener.set(true)
-    atAccessWideners.add(loom.accessWidenerPath.get().asFile.name)
+    from(zipTree(tasks.named<Jar>("jar").get().archiveFile.get()))
 }

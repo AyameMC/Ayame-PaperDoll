@@ -21,17 +21,26 @@
 package org.ayamemc.ayamepaperdoll.hud;
 
 import com.mojang.blaze3d.ProjectionType;
+import com.mojang.blaze3d.opengl.GlStateManager;
 import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.systems.GpuDevice;
 import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.textures.AddressMode;
+import com.mojang.blaze3d.textures.FilterMode;
+import com.mojang.blaze3d.textures.TextureFormat;
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.render.TextureSetup;
 import net.minecraft.client.gui.render.pip.PictureInPictureRenderer;
-import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.CachedOrthoProjectionMatrixBuffer;
+import net.minecraft.client.renderer.RenderPipelines;
+import net.minecraft.client.renderer.state.gui.BlitRenderState;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.renderer.ProjectionMatrixBuffer;
+import net.minecraft.client.renderer.Projection;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.feature.FeatureRenderDispatcher;
-import net.minecraft.client.renderer.state.CameraRenderState;
+import net.minecraft.client.renderer.state.level.CameraRenderState;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Quaternionf;
@@ -40,10 +49,11 @@ import org.joml.Vector3f;
 import static org.ayamemc.ayamepaperdoll.AyamePaperDoll.CONFIGS;
 
 public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
-    private final CachedOrthoProjectionMatrixBuffer projectionMatrixBuffer = new CachedOrthoProjectionMatrixBuffer(
-            "PIP - " + this.getClass().getSimpleName(), -1000.0F, 1000.0F, true
-    );
+    private final ProjectionMatrixBuffer projectionMatrixBuffer = new ProjectionMatrixBuffer("PIP - " + this.getClass().getSimpleName());
     private final EntityRenderDispatcher entityRenderDispatcher;
+    private final Projection projection = new Projection();
+
+    private int width, height;
 
     public ModRenderer(MultiBufferSource.BufferSource bufferSource, EntityRenderDispatcher entityRenderDispatcher) {
         super(bufferSource);
@@ -58,8 +68,6 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
     @Override
     protected void renderToTexture(ModRenderState renderState, PoseStack poseStack) {
         Minecraft.getInstance().gameRenderer.getLighting().setupFor(Lighting.Entry.ENTITY_IN_UI);
-        Vector3f vector3f = renderState.translation();
-        poseStack.mulPose(renderState.rotation());
         Quaternionf quaternionf = renderState.overrideCameraAngle();
         FeatureRenderDispatcher featurerenderdispatcher = Minecraft.getInstance().gameRenderer.getFeatureRenderDispatcher();
         CameraRenderState camerarenderstate = new CameraRenderState();
@@ -67,7 +75,16 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
         if (quaternionf != null) {
             camerarenderstate.orientation = quaternionf.conjugate(new Quaternionf()).rotateY((float) Math.PI);
         }
-
+        if(renderState.vehicleRenderState() != null){
+            poseStack.pushPose();
+            Vector3f vector3f = renderState.translation2();
+            assert vector3f != null;
+            poseStack.mulPose(renderState.rotation2());
+            this.entityRenderDispatcher.submit(renderState.vehicleRenderState(), camerarenderstate, vector3f.x, vector3f.y, vector3f.z, poseStack, featurerenderdispatcher.getSubmitNodeStorage());
+            poseStack.popPose();
+        }
+        Vector3f vector3f = renderState.translation();
+        poseStack.mulPose(renderState.rotation());
         this.entityRenderDispatcher.submit(renderState.renderState(), camerarenderstate, vector3f.x, vector3f.y, vector3f.z, poseStack, featurerenderdispatcher.getSubmitNodeStorage());
         featurerenderdispatcher.renderAllFeatures();
     }
@@ -76,21 +93,60 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
     protected @NotNull String getTextureLabel() {
         return "ayame-paperdoll";
     }
+
     @Override
     public void prepare(ModRenderState renderState, GuiRenderState guiRenderState, int guiScale) {
-        AyamePaperDoll.identifier=CONFIGS.mirrored.getValue();
-        RenderSystem.setProjectionMatrix(
-                this.projectionMatrixBuffer.getBuffer(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
-                        Minecraft.getInstance().getWindow().getGuiScaledHeight()),
-                ProjectionType.ORTHOGRAPHIC);
-
-        PoseStack posestack = renderState.boat()?new PaperDollRenderer.PaperDollPoseStack():new PoseStack();
-        posestack.translate(renderState.x0(), renderState.y0(), 0.0F);
-        posestack.scale(CONFIGS.mirrored.getValue()?-1.0f:1.0f, 1.0f, -1.0f);
+        var width = Minecraft.getInstance().getWindow().getGuiScaledWidth();
+        var height = Minecraft.getInstance().getWindow().getGuiScaledHeight();
+        var raw_width = Minecraft.getInstance().getWindow().getWidth();
+        var raw_height = Minecraft.getInstance().getWindow().getHeight();
+        boolean needsAResize = this.width != width || this.height != height;
+        if (needsAResize) {
+            this.width = width;
+            this.height = height;
+        }
+        this.prepareTexturesAndProjection(true, raw_width, raw_height);
+        this.projection.setupOrtho(-1000.0F, 1000.0F, width, height, true);
+        RenderSystem.setProjectionMatrix(this.projectionMatrixBuffer.getBuffer(this.projection), ProjectionType.ORTHOGRAPHIC);
+        RenderSystem.outputColorTextureOverride = this.textureView;
+        RenderSystem.outputDepthTextureOverride = this.depthTextureView;
+        PoseStack posestack = new PoseStack();
+        float x0 =CONFIGS.mirrored.getValue()? width - renderState.x0() : renderState.x0();
+        posestack.translate(x0, renderState.y0(), 0.0F);
         float f =  renderState.scale();
-        posestack.scale(f, f, f);
+        posestack.scale(f, f, -f);
         this.renderToTexture(renderState, posestack);
         this.bufferSource.endBatch();
-        AyamePaperDoll.identifier=false;
+        RenderSystem.outputColorTextureOverride = null;
+        RenderSystem.outputDepthTextureOverride = null;
+        blitTexture(renderState, guiRenderState);
+    }
+
+    @Override
+    protected void blitTexture(final ModRenderState renderState, final GuiRenderState guiRenderState) {
+        float u0,u1;
+        if(CONFIGS.mirrored.getValue()){
+            u0 = 1.0f;
+            u1 = 0.0f;
+        } else {
+            u0 = 0.0f;
+            u1 = 1.0f;
+        }
+        guiRenderState.addGlyphToCurrentLayer(
+                new ExBlitRenderState(
+                        AyamePaperDoll.MOD_PIPELINE,
+                        new TextureSetup(
+                                this.textureView, null, Minecraft.getInstance().gameRenderer.levelLightmap(), RenderSystem.getSamplerCache().getRepeat(FilterMode.NEAREST), null, RenderSystem.getSamplerCache().getClampToEdge(FilterMode.LINEAR)
+                        ),
+                        renderState.pose(),
+                        0,0, width, height,
+                        u0,u1,
+                        1.0F,
+                        0.0F,
+                        renderState.renderState().lightCoords,
+                        renderState.scissorArea(),
+                        null
+                )
+        );
     }
 }

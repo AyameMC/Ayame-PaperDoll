@@ -20,41 +20,23 @@
 
 package org.ayamemc.ayamepaperdoll.mixin.hud;
 
-import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.render.state.GuiRenderState;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
-import org.ayamemc.ayamepaperdoll.hud.ModRenderState;
-import org.ayamemc.ayamepaperdoll.mixininterface.GuiGraphicsInterface;
-import org.jetbrains.annotations.Nullable;
-import org.joml.Quaternionf;
-import org.joml.Vector3f;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.renderer.state.gui.GuiRenderState;
+import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
+import org.ayamemc.ayamepaperdoll.mixininterface.GuiGraphicsExtractorInterface;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(GuiGraphics.class)
-public class GuiGraphicsMixin implements GuiGraphicsInterface {
+@Mixin(GuiGraphicsExtractor.class)
+public class GuiGraphicsExtractorMixin implements GuiGraphicsExtractorInterface {
 
     @Shadow
     @Final
     private GuiRenderState guiRenderState;
 
-
-    @Shadow
-    @Final
-    private GuiGraphics.ScissorStack scissorStack;
-
     @Override
-    public void submitModeRenderState(EntityRenderState renderState, Vector3f translation, Quaternionf rotation, @Nullable Quaternionf overrideCameraAngle, int x0, int y0, float scale,boolean boat) {
-        this.guiRenderState.submitPicturesInPictureState(
-                new ModRenderState(
-                        renderState,
-                        translation,
-                        rotation,
-                        overrideCameraAngle,
-                        x0, y0,scale,boat,
-                        scissorStack.peek()
-                )
-        );
+    public void addPicturesInPictureState(PictureInPictureRenderState picturesInPictureState) {
+        this.guiRenderState.addPicturesInPictureState(picturesInPictureState);
     }
 }

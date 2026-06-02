@@ -20,10 +20,8 @@
 
 package org.ayamemc.ayamepaperdoll.neoforge;
 
-import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
@@ -36,7 +34,6 @@ import net.neoforged.neoforge.client.event.RenderGuiEvent;
 import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
 import net.neoforged.neoforge.common.NeoForge;
 import org.ayamemc.ayamepaperdoll.AyamePaperDoll;
-import org.ayamemc.ayamepaperdoll.CommonInterfaceInstances;
 import org.ayamemc.ayamepaperdoll.config.ConfigScreen;
 import org.ayamemc.ayamepaperdoll.handler.EventHandler;
 import org.ayamemc.ayamepaperdoll.hud.ModRenderState;
@@ -46,8 +43,6 @@ import org.ayamemc.ayamepaperdoll.hud.ModRenderer;
 public final class AyamePaperDollNeoForge {
     public AyamePaperDollNeoForge(IEventBus modBus) {
         // Run our NeoForge setup.
-        CommonInterfaceInstances.keyHelper = KeyMapping::getKey;
-
         AyamePaperDoll.init();
 
         modBus.addListener(AyamePaperDollNeoForge::registerKeyMapping);
@@ -73,8 +68,8 @@ public final class AyamePaperDollNeoForge {
     }
 
     private static void renderPaperDoll(RenderGuiEvent.Pre event) {
-        final GuiGraphics guiGraphics = event.getGuiGraphics();
-        final DeltaTracker partialTick = event.getPartialTick();
+        final var guiGraphics = event.getGuiGraphics();
+        final var partialTick = event.getPartialTick();
         EventHandler.renderPaperDoll(guiGraphics, partialTick);
     }
 

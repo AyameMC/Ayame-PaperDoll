@@ -41,8 +41,9 @@
     "fabric-api": ">=${fabric_api_version}"
   },
   "suggests": {
-    "modmenu": ">={modmenu_version}"
+    "modmenu": ">=${modmenu_version}"
   },
+  "accessWidener": "ayame-paperdoll.accesswidener",
   "custom": {
     "modmenu": {
       "links": {

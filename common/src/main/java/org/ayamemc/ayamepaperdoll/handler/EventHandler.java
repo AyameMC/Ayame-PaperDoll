@@ -22,7 +22,7 @@ package org.ayamemc.ayamepaperdoll.handler;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.player.Player;
@@ -39,7 +39,7 @@ public class EventHandler {
     public static Screen lastScreen;
 
     @SuppressWarnings("DataFlowIssue")
-    public static void renderPaperDoll(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void renderPaperDoll(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         final Player player = minecraft.player;
         final Pose playerPose = player.getPose();
         if (
@@ -53,7 +53,7 @@ public class EventHandler {
 
 
         ) {
-            paperDollRenderer.render(deltaTracker.getGameTimeDeltaPartialTick(true), guiGraphics);
+            paperDollRenderer.extractPaperdoll(graphics, deltaTracker.getGameTimeDeltaPartialTick(true));
         }
     }
 

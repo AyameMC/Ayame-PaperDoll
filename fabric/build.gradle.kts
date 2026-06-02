@@ -55,21 +55,19 @@ val shadowBundle by configurations.creating {
 }
 
 dependencies {
-    modImplementation("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
-    modImplementation("net.fabricmc.fabric-api:fabric-api:${rootProject.extra["fabric_api_version"]}")
-    modImplementation("com.terraformersmc:modmenu:${project.extra["modmenu_version"]}")
+    implementation("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
+    //runtimeOnly("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
+    implementation("net.fabricmc.fabric-api:fabric-api:${rootProject.extra["fabric_api_version"]}")
+    implementation("com.terraformersmc:modmenu:${project.extra["modmenu_version"]}")
 
-    val commonDep = project(mapOf("path" to ":common", "configuration" to "namedElements"))
-    add("common", commonDep)
-    configurations.named("common") {
-        withDependencies {
-            find { it == commonDep }?.let {
-                (it as? ModuleDependency)?.isTransitive = false
-            }
-        }
-    }
+    common(project(path = ":common")) { isTransitive = false }
 
-    add("shadowBundle", project(mapOf("path" to ":common", "configuration" to "transformProductionFabric")))
+    shadowBundle(
+        project(
+            path = ":common",
+            configuration = "transformProductionFabric"
+        )
+    ) { isTransitive = false }
 }
 
 tasks.named<ProcessResources>("processResources") {
@@ -96,23 +94,27 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-tasks.named<Jar>("sourcesJar") {
-    val commonSources = project(":common").tasks.named<Jar>("sourcesJar")
-    dependsOn(commonSources)
-    from(commonSources.map { zipTree(it.archiveFile) })
-    archiveClassifier.set("sources")
+tasks.named<Jar>("jar") {
+    archiveClassifier.set("raw")
+}
+
+configurations {
+    apiElements {
+        outgoing.artifacts.clear()
+        outgoing.artifact((tasks.named("shadowJar")))
+    }
+    runtimeElements {
+        outgoing.artifacts.clear()
+        outgoing.artifact((tasks.named("shadowJar")))
+    }
 }
 
 
 tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") {
+    dependsOn((tasks.named("jar")))
     configurations = listOf(shadowBundle)
-    archiveClassifier.set("dev-shadow")
-}
+    archiveClassifier.set(null as String?)
 
-tasks.named<net.fabricmc.loom.task.RemapJarTask>("remapJar") {
-    dependsOn("shadowJar")
-    val shadowJarTask = tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar")
-    inputFile.set(shadowJarTask.get().archiveFile)
-    injectAccessWidener.set(true)
+    from(zipTree(tasks.named<Jar>("jar").get().archiveFile.get()))
 }
 

@@ -20,7 +20,7 @@
 
 package org.ayamemc.ayamepaperdoll.config;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
@@ -41,21 +41,21 @@ public class VisualConfigEditorScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractRenderState(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
         // 十字的水平线，- 1能居中点，大概
-        guiGraphics.hLine(0, width, (height / 2) - 1, LINE_COLOR);
+        graphics.horizontalLine(0, width, (height / 2) - 1, LINE_COLOR);
         // 十字的垂直线
-        guiGraphics.vLine((width / 2), -1, height, LINE_COLOR);
+        graphics.verticalLine((width / 2), -1, height, LINE_COLOR);
 
         // 底下的线
-        guiGraphics.hLine(0, width, (height - BORDER_MARGIN), LINE_COLOR);
+        graphics.horizontalLine(0, width, (height - BORDER_MARGIN), LINE_COLOR);
         // 顶上的线
-        guiGraphics.hLine(0, width, BORDER_MARGIN, LINE_COLOR);
+        graphics.horizontalLine(0, width, BORDER_MARGIN, LINE_COLOR);
         // 左边的线
-        guiGraphics.vLine((width - BORDER_MARGIN), -1, height, LINE_COLOR);
+        graphics.verticalLine((width - BORDER_MARGIN), -1, height, LINE_COLOR);
         // 右边的线
-        guiGraphics.vLine(BORDER_MARGIN, -1, height, LINE_COLOR);
-        paperDollRenderer.render(partialTick, guiGraphics);
+        graphics.verticalLine(BORDER_MARGIN, -1, height, LINE_COLOR);
+        paperDollRenderer.extractPaperdoll(graphics, a);
     }
 
 
@@ -109,7 +109,7 @@ public class VisualConfigEditorScreen extends Screen {
     }
 
     @Override
-    public void renderBackground(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    public void extractBackground(GuiGraphicsExtractor graphics, int mouseX, int mouseY, float a) {
     }
 
 }
