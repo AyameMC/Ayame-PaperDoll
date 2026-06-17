@@ -66,9 +66,9 @@ public class VisualConfigEditorScreen extends Screen {
 
         if (lastScreen instanceof ConfigScreen configScreen) {
             configScreen.onClose();
-            this.minecraft.setScreen(new ConfigScreen(lastScreen, CONFIGS.getOptions()));
+            this.minecraft.gui.setScreen(new ConfigScreen(lastScreen, CONFIGS.getOptions()));
         } else {
-            this.minecraft.setScreen(lastScreen);
+            this.minecraft.gui.setScreen(lastScreen);
         }
     }
 

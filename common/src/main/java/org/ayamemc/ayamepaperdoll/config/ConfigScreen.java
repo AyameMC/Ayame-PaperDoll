@@ -26,6 +26,7 @@ import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.StringWidget;
 import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.events.GuiEventListener;
+import net.minecraft.client.gui.components.tabs.MenuTabBar;
 import net.minecraft.client.gui.components.tabs.TabManager;
 import net.minecraft.client.gui.components.tabs.TabNavigationBar;
 import net.minecraft.client.gui.narration.NarratableEntry;
@@ -78,7 +79,7 @@ public class ConfigScreen extends Screen {
     @Override
     protected void init() {
         this.tabs = generateTabs();
-        this.addRenderableWidget(this.tabNav = TabNavigationBar
+        this.addRenderableWidget(this.tabNav = MenuTabBar
                 .builder(this.tabManager, this.width)
                 .addTabs(tabs).build());
 
@@ -130,8 +131,7 @@ public class ConfigScreen extends Screen {
     protected void repositionElements() {
         if (this.tabNav == null) return;
 
-        this.tabNav.updateWidth(this.width);
-        this.tabNav.arrangeElements();
+        this.tabNav.arrangeElements(this.width);
         for (var listWidget : this.listWidgets) {
             listWidget.setSize(this.width, this.height - TAB_BUTTON_HEIGHT);
             listWidget.setRowWidth(this.width + LIST_WIDTH_OFFSET);
@@ -144,7 +144,7 @@ public class ConfigScreen extends Screen {
         AyamePaperDoll.CONFIGS.lastConfigTabIdx.setValue(ArrayUtils.indexOf(tabs, tabManager.getCurrentTab()));
 
         //noinspection DataFlowIssue
-        this.minecraft.setScreen(lastScreen);
+        this.minecraft.gui.setScreen(lastScreen);
         AyamePaperDoll.CONFIG_PERSISTENCE.save(AyamePaperDoll.CONFIGS.getOptions());
     }
 
@@ -221,7 +221,7 @@ public class ConfigScreen extends Screen {
         final int buttonWidth = 140, buttonHeight = 20;
 
         var visualConfigEditorButton = new ConfigWidgetRegistry.ConfigButton(buttonWidth, buttonHeight, getButtonText("visual_config_editor"),
-                (button) -> minecraft.setScreen(new VisualConfigEditorScreen(this)));
+                (button) -> minecraft.gui.setScreen(new VisualConfigEditorScreen(this)));
         if (minecraft.level == null) {
             visualConfigEditorButton.active = false;
             visualConfigEditorButton.setTooltip(Tooltip.create(Component.translatable("config.%s.option.visual_config_editor_not_available.desc".formatted(AyamePaperDoll.MOD_ID))));

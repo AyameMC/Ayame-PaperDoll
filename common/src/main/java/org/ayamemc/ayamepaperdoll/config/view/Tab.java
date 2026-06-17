@@ -21,6 +21,7 @@
 package org.ayamemc.ayamepaperdoll.config.view;
 
 import net.minecraft.client.gui.components.AbstractWidget;
+import net.minecraft.client.gui.layouts.Layout;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
@@ -69,5 +70,10 @@ public class Tab implements net.minecraft.client.gui.components.tabs.Tab {
      */
     @Override
     public void doLayout(ScreenRectangle tabArea) {
+    }
+
+    @Override
+    public Layout getLayout() {
+        return null;
     }
 }
