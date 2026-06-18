@@ -92,6 +92,7 @@ tasks.named<ProcessResources>("processResources") {
         "fabric_api_version" to project.findProperty("fabric_api_version"),
         "fabric_minecraft_version_range" to project.findProperty("fabric_minecraft_version_range"),
         "modmenu_version" to project.findProperty("modmenu_version"),
+        "mod_access_widener_name" to project.findProperty("mod_access_widener_name")
     )
 
     inputs.properties(placeholders)
@@ -118,6 +119,6 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     configurations = listOf(shadowBundle)
     archiveClassifier.set(null as String?)
 
-    from(zipTree(tasks.named<Jar>("jar").get().archiveFile.get()))
+    from(project(":common").sourceSets.main.get().output)
 }
 
