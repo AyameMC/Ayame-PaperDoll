@@ -19,7 +19,7 @@ jobs:
           java-version: '25'
 
       - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@6
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Build Mod
         run: sh build.sh
