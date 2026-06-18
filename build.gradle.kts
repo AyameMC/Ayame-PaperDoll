@@ -23,7 +23,7 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
     id("architectury-plugin") version "3.5-SNAPSHOT"
-    id("dev.architectury.loom-no-remap") version "1.17-SNAPSHOT" apply false
+    id("dev.architectury.loom-no-remap") version "1.17.483" apply false
     id("com.gradleup.shadow") version "9.2.2" apply false
     id("java")
     id("maven-publish")
@@ -36,17 +36,6 @@ architectury {
 allprojects {
     apply(plugin = "architectury-plugin")
     apply(plugin = "java")
-
-    repositories {
-        maven {
-            name = "ParchmentMC"
-            url = uri("https://maven.parchmentmc.org")
-        }
-        maven {
-            name = "Terraformers"
-            url = uri("https://maven.terraformersmc.com/")
-        }
-    }
 
     base.archivesName = rootProject.findProperty("mod_archives_name") as String
     group = rootProject.findProperty("mod_maven_group") as String

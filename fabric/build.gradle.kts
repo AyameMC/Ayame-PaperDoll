@@ -38,6 +38,7 @@ loom {
             .getByType<LoomGradleExtensionAPI>()
             .accessWidenerPath
     )
+    injectAccessWidener(tasks.named<Jar>("jar"))
 }
 
 val common by configurations.creating {
@@ -54,9 +55,15 @@ val shadowBundle by configurations.creating {
     isCanBeConsumed = false
 }
 
+repositories {
+    maven {
+        name = "Terraformers"
+        url = uri("https://maven.terraformersmc.com/")
+    }
+}
+
 dependencies {
     implementation("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
-    //runtimeOnly("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
     implementation("net.fabricmc.fabric-api:fabric-api:${rootProject.extra["fabric_api_version"]}")
     implementation("com.terraformersmc:modmenu:${project.extra["modmenu_version"]}")
 
@@ -92,10 +99,6 @@ tasks.named<ProcessResources>("processResources") {
     filesMatching("fabric.mod.json") {
         expand(placeholders)
     }
-}
-
-tasks.named<Jar>("jar") {
-    archiveClassifier.set("raw")
 }
 
 configurations {

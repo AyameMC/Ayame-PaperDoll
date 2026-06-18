@@ -27,7 +27,6 @@ dependencies {
     // which get remapped to the correct annotations on each platform.
     // Do NOT use other classes from Fabric Loader.
     implementation("net.fabricmc:fabric-loader:${rootProject.property("fabric_loader_version")}")
-    //"minecraft"("com.mojang:minecraft:${rootProject.findProperty("minecraft_version")}")
 }
 loom {
     accessWidenerPath = file("src/main/resources/${rootProject.property("mod_access_widener_name")}")
