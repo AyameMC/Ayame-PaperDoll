@@ -43,7 +43,6 @@
   "suggests": {
     "modmenu": ">=${modmenu_version}"
   },
-  "accessWidener": "${mod_access_widener_name}",
   "custom": {
     "modmenu": {
       "links": {

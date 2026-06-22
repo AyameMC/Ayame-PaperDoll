@@ -29,7 +29,7 @@ architectury {
 
 loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
-    neoForge.convertAccessWideners(tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJar") , "ayame-paperdoll.accesswidener");
+    neoForge.convertAccessWideners(tasks.shadowJar , "ayame-paperdoll.accesswidener")
 }
 
 val common by configurations.creating {

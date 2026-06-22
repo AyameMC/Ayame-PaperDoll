@@ -18,12 +18,10 @@
  *     along with Ayame PaperDoll.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-
 
 plugins {
     id("architectury-plugin") version "3.5-SNAPSHOT"
-    id("dev.architectury.loom-no-remap") version "1.17.483" apply false
+    id("dev.architectury.loom-no-remap") version "1.17.486" apply false
     id("com.gradleup.shadow") version "9.2.2" apply false
     id("java")
     id("maven-publish")

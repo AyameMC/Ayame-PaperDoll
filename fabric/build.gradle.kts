@@ -19,8 +19,6 @@
  */
 
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-
 plugins {
     id("com.gradleup.shadow") version "9.2.2"
 }
@@ -32,13 +30,8 @@ architectury {
 }
 
 loom {
-    accessWidenerPath.set(
-        project(":common")
-            .extensions
-            .getByType<LoomGradleExtensionAPI>()
-            .accessWidenerPath
-    )
-    injectAccessWidener(tasks.named<Jar>("jar"))
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+    injectAccessWidener(tasks.shadowJar)
 }
 
 val common by configurations.creating {
@@ -92,7 +85,6 @@ tasks.named<ProcessResources>("processResources") {
         "fabric_api_version" to project.findProperty("fabric_api_version"),
         "fabric_minecraft_version_range" to project.findProperty("fabric_minecraft_version_range"),
         "modmenu_version" to project.findProperty("modmenu_version"),
-        "mod_access_widener_name" to project.findProperty("mod_access_widener_name")
     )
 
     inputs.properties(placeholders)
