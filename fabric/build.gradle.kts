@@ -19,8 +19,6 @@
  */
 
 
-import net.fabricmc.loom.api.LoomGradleExtensionAPI
-
 plugins {
     id("com.gradleup.shadow") version "9.2.2"
 }
@@ -32,12 +30,8 @@ architectury {
 }
 
 loom {
-    accessWidenerPath.set(
-        project(":common")
-            .extensions
-            .getByType<LoomGradleExtensionAPI>()
-            .accessWidenerPath
-    )
+    accessWidenerPath = project(":common").loom.accessWidenerPath
+    injectAccessWidener(tasks.shadowJar)
 }
 
 val common by configurations.creating {
@@ -54,9 +48,15 @@ val shadowBundle by configurations.creating {
     isCanBeConsumed = false
 }
 
+repositories {
+    maven {
+        name = "Terraformers"
+        url = uri("https://maven.terraformersmc.com/")
+    }
+}
+
 dependencies {
     implementation("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
-    //runtimeOnly("net.fabricmc:fabric-loader:${rootProject.extra["fabric_loader_version"]}")
     implementation("net.fabricmc.fabric-api:fabric-api:${rootProject.extra["fabric_api_version"]}")
     implementation("com.terraformersmc:modmenu:${project.extra["modmenu_version"]}")
 
@@ -94,10 +94,6 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-tasks.named<Jar>("jar") {
-    archiveClassifier.set("raw")
-}
-
 configurations {
     apiElements {
         outgoing.artifacts.clear()
@@ -115,6 +111,6 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     configurations = listOf(shadowBundle)
     archiveClassifier.set(null as String?)
 
-    from(zipTree(tasks.named<Jar>("jar").get().archiveFile.get()))
+    from(project(":common").sourceSets.main.get().output)
 }
 

@@ -43,7 +43,6 @@
   "suggests": {
     "modmenu": ">=${modmenu_version}"
   },
-  "accessWidener": "ayame-paperdoll.accesswidener",
   "custom": {
     "modmenu": {
       "links": {

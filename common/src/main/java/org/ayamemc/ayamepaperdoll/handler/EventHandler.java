@@ -42,12 +42,13 @@ public class EventHandler {
     public static void renderPaperDoll(GuiGraphicsExtractor graphics, DeltaTracker deltaTracker) {
         final Player player = minecraft.player;
         final Pose playerPose = player.getPose();
+        final var gui = minecraft.gui;
         if (
-                !minecraft.options.hideGui &&
+                !gui.hud.isHidden() &&
                         !(CONFIGS.hideUnderDebug.getValue() && minecraft.debugEntries.isOverlayVisible()) &&
-                        (minecraft.screen == null || !CONFIGS.hideOnScreenOpen.getValue()) &&
-                        !(minecraft.screen instanceof ConfigScreen) &&
-                        !(minecraft.screen instanceof VisualConfigEditorScreen) &&
+                        (gui.screen() == null || !CONFIGS.hideOnScreenOpen.getValue()) &&
+                        !(gui.screen() instanceof ConfigScreen) &&
+                        !(gui.screen() instanceof VisualConfigEditorScreen) &&
                         (!(CONFIGS.visibleDuringActivity.getValue()) ||
                                 (CONFIGS.visibleDuringActivity.getValue() && hasActivity(player, playerPose)))
 
@@ -94,7 +95,7 @@ public class EventHandler {
             CONFIGS.displayPaperDoll.setValue(!CONFIGS.displayPaperDoll.getValue());
         }
         while (AyamePaperDoll.OPEN_CONFIG_GUI.consumeClick()) {
-            minecraft.setScreen(new ConfigScreen(lastScreen, AyamePaperDoll.CONFIGS.getOptions()));
+            minecraft.gui.setScreen(new ConfigScreen(lastScreen, AyamePaperDoll.CONFIGS.getOptions()));
         }
     }
 }

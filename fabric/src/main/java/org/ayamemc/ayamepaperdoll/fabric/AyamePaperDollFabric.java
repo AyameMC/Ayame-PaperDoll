@@ -49,7 +49,7 @@ public class AyamePaperDollFabric implements ClientModInitializer {
                 EventHandler::renderPaperDoll
         );
         PictureInPictureRendererRegistry.register(context -> new ModRenderer(
-                context.bufferSource(), context.minecraft().getEntityRenderDispatcher()
+                context.minecraft().getEntityRenderDispatcher()
         ));
     }
 }

@@ -20,7 +20,6 @@
 
 package org.ayamemc.ayamepaperdoll.neoforge;
 
-import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.IEventBus;
@@ -61,9 +60,7 @@ public final class AyamePaperDollNeoForge {
         event.register(
                 ModRenderState.class,
                 // A factory that takes in the `MultiBufferSource.BufferSource` and returns the PiP renderer
-                (ctx)-> new ModRenderer(
-                        ctx,Minecraft.getInstance().getEntityRenderDispatcher()
-                )
+                ()-> new ModRenderer(Minecraft.getInstance().getEntityRenderDispatcher())
         );
     }
 

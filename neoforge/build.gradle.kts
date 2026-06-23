@@ -29,6 +29,7 @@ architectury {
 
 loom {
     accessWidenerPath.set(project(":common").loom.accessWidenerPath)
+    neoForge.convertAccessWideners(tasks.shadowJar , "ayame-paperdoll.accesswidener")
 }
 
 val common by configurations.creating {
@@ -88,10 +89,6 @@ tasks.named<ProcessResources>("processResources") {
     }
 }
 
-tasks.named<Jar>("jar") {
-    archiveClassifier.set("raw")
-}
-
 configurations {
     apiElements {
         outgoing.artifacts.clear()
@@ -109,5 +106,5 @@ tasks.named<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar>("shadowJ
     configurations = listOf(shadowBundle)
     archiveClassifier.set(null as String?)
 
-    from(zipTree(tasks.named<Jar>("jar").get().archiveFile.get()))
+    from(project(":common").sourceSets.main.get().output)
 }

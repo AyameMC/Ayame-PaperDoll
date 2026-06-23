@@ -36,7 +36,7 @@ public class GuiGraphicsExtractorMixin implements GuiGraphicsExtractorInterface 
     private GuiRenderState guiRenderState;
 
     @Override
-    public void addPicturesInPictureState(PictureInPictureRenderState picturesInPictureState) {
+    public void ayame_paperDoll$addPicturesInPictureState(PictureInPictureRenderState picturesInPictureState) {
         this.guiRenderState.addPicturesInPictureState(picturesInPictureState);
     }
 }

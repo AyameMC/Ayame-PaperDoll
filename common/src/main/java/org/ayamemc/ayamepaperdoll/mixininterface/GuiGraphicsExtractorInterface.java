@@ -23,5 +23,5 @@ package org.ayamemc.ayamepaperdoll.mixininterface;
 import net.minecraft.client.renderer.state.gui.pip.PictureInPictureRenderState;
 
 public interface GuiGraphicsExtractorInterface {
-    void addPicturesInPictureState(PictureInPictureRenderState picturesInPictureState);
+    void ayame_paperDoll$addPicturesInPictureState(PictureInPictureRenderState picturesInPictureState);
 }
