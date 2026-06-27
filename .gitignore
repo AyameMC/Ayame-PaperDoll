@@ -18,3 +18,39 @@ build/*
 /.idea/
 !/.idea/copyright/
 /*/.architectury-transformer/
+/common/run/saves/新的世界 (1)/playerdata/97ca14d5-9f19-3536-8732-0f9262f3eb17.dat
+/common/run/saves/新的世界 (1)/playerdata/97ca14d5-9f19-3536-8732-0f9262f3eb17.dat_old
+/common/run/saves/新的世界 (1)/advancements/97ca14d5-9f19-3536-8732-0f9262f3eb17.json
+/common/run/saves/新的世界 (1)/stats/97ca14d5-9f19-3536-8732-0f9262f3eb17.json
+/common/run/saves/新的世界 (1)/data/chunks.dat
+/common/run/saves/新的世界 (1)/DIM1/data/chunks.dat
+/common/run/saves/新的世界 (1)/DIM-1/data/chunks.dat
+/common/run/logs/debug.log
+/common/run/saves/新的世界 (1)/icon.png
+/common/run/logs/latest.log
+/common/run/saves/新的世界 (1)/level.dat
+/common/run/saves/新的世界 (1)/level.dat_old
+/common/run/downloads/log.json
+/common/run/options.txt
+/common/run/saves/新的世界 (1)/entities/r.0.0.mca
+/common/run/saves/新的世界 (1)/poi/r.0.0.mca
+/common/run/saves/新的世界 (1)/region/r.0.0.mca
+/common/run/saves/新的世界 (1)/entities/r.0.-1.mca
+/common/run/saves/新的世界 (1)/poi/r.0.-1.mca
+/common/run/saves/新的世界 (1)/region/r.0.-1.mca
+/common/run/saves/新的世界 (1)/entities/r.-1.0.mca
+/common/run/saves/新的世界 (1)/poi/r.-1.0.mca
+/common/run/saves/新的世界 (1)/region/r.-1.0.mca
+/common/run/saves/新的世界 (1)/entities/r.-1.-1.mca
+/common/run/saves/新的世界 (1)/poi/r.-1.-1.mca
+/common/run/saves/新的世界 (1)/region/r.-1.-1.mca
+/common/run/saves/新的世界 (1)/data/raids.dat
+/common/run/saves/新的世界 (1)/DIM-1/data/raids.dat
+/common/run/saves/新的世界 (1)/DIM1/data/raids_end.dat
+/common/run/saves/新的世界 (1)/data/random_sequences.dat
+/common/run/saves/新的世界 (1)/data/scoreboard.dat
+/common/run/saves/新的世界 (1)/session.lock
+/common/run/usercache.json
+/common/run/saves/新的世界 (1)/data/world_border.dat
+/common/run/saves/新的世界 (1)/DIM1/data/world_border.dat
+/common/run/saves/新的世界 (1)/DIM-1/data/world_border.dat
