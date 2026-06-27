@@ -18,3 +18,4 @@ build/*
 /.idea/
 !/.idea/copyright/
 /*/.architectury-transformer/
+/common/run/
