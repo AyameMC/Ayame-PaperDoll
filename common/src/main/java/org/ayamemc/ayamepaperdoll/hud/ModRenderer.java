@@ -76,21 +76,22 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
     protected @NotNull String getTextureLabel() {
         return "ayame-paperdoll";
     }
+
     @Override
     public void prepare(ModRenderState renderState, GuiRenderState guiRenderState, int guiScale) {
-        AyamePaperDoll.identifier=CONFIGS.mirrored.getValue();
+        AyamePaperDoll.identifier = CONFIGS.mirrored.getValue();
         RenderSystem.setProjectionMatrix(
                 this.projectionMatrixBuffer.getBuffer(Minecraft.getInstance().getWindow().getGuiScaledWidth(),
                         Minecraft.getInstance().getWindow().getGuiScaledHeight()),
                 ProjectionType.ORTHOGRAPHIC);
 
-        PoseStack posestack = renderState.boat()?new PaperDollRenderer.PaperDollPoseStack():new PoseStack();
+        PoseStack posestack = renderState.boat() ? new PaperDollRenderer.PaperDollPoseStack() : new PoseStack();
         posestack.translate(renderState.x0(), renderState.y0(), 0.0F);
-        posestack.scale(CONFIGS.mirrored.getValue()?-1.0f:1.0f, 1.0f, -1.0f);
-        float f =  renderState.scale();
+        posestack.scale(CONFIGS.mirrored.getValue() ? -1.0f : 1.0f, 1.0f, -1.0f);
+        float f = renderState.scale();
         posestack.scale(f, f, f);
         this.renderToTexture(renderState, posestack);
         this.bufferSource.endBatch();
-        AyamePaperDoll.identifier=false;
+        AyamePaperDoll.identifier = false;
     }
 }
