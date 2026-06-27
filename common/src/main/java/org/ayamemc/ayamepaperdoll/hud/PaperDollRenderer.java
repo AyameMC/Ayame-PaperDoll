@@ -284,6 +284,13 @@ public class PaperDollRenderer {
         state.shadowPieces.clear();
         state.outlineColor = 0;
 
+        // 启用Tweakeroo FreeCam功能时候不显示自己的 nameTag
+        if (state.nameTag != null && minecraft.player != null) {
+            if ( minecraft.player.getName().getString().equals(state.nameTag.getString())) {
+                state.nameTag = null;
+            }
+        }
+
         Quaternionf pose = new Quaternionf().rotateZ((float) Math.PI).rotateY((float) Math.PI);
         Quaternionf configRot = new Quaternionf().rotateXYZ(
                 (float) Math.toRadians(CONFIGS.rotationX.getValue()),
