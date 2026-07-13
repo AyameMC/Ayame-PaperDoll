@@ -40,6 +40,7 @@ public record ModRenderState(
         int x1,
         int y1,
         float scale,
+        float lightDegree,
         @Nullable ScreenRectangle scissorArea,
         @Nullable ScreenRectangle bounds
 ) implements PictureInPictureRenderState {
@@ -54,6 +55,7 @@ public record ModRenderState(
             int x,
             int y,
             float scale,
+            float lightDegree,
             @Nullable ScreenRectangle scissorArea
     ) {
         this(
@@ -69,6 +71,7 @@ public record ModRenderState(
                 x,
                 y,
                 scale,
+                lightDegree,
                 scissorArea,
                 PictureInPictureRenderState.getBounds(x, y, x, y, scissorArea)
         );
