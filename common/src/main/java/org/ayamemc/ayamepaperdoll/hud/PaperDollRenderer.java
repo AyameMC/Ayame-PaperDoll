@@ -229,7 +229,7 @@ public class PaperDollRenderer {
         final double headYaw = CONFIGS.headYaw.getValue(), headYawRange = CONFIGS.headYawRange.getValue();
         final double bodyYaw = CONFIGS.bodyYaw.getValue(), bodyYawRange = CONFIGS.bodyYawRange.getValue();
         final double pitch = CONFIGS.pitch.getValue(), pitchRange = CONFIGS.pitchRange.getValue();
-        final float headClamp = (float) Mth.clamp(headLerp, headYaw - headYawRange, headYaw + headYawRange);
+        final float headClamp = (float) Mth.clamp(Mth.wrapDegrees(headLerp), headYaw - headYawRange, headYaw + headYawRange);
         final float bodyLerp = Mth.lerp(partialTicks, targetEntity.yBodyRotO, targetEntity.yBodyRot);
         final float diff = headLerp - bodyLerp;
         final float bodyClamp = (float) Mth.clamp(Mth.wrapDegrees(headClamp - diff), bodyYaw - bodyYawRange, bodyYaw + bodyYawRange);
@@ -279,7 +279,7 @@ public class PaperDollRenderer {
                 (float) Math.toRadians(CONFIGS.rotationY.getValue()),
                 (float) Math.toRadians(CONFIGS.rotationZ.getValue()));
 
-        pose.mul(configRot).rotateY((float) Math.toRadians(lightDegree + 180));
+        pose.mul(configRot).rotateY((float) Math.PI);
 
         var pose1 = new Quaternionf(pose);
         if(target instanceof BoatRenderState) {
@@ -302,7 +302,7 @@ public class PaperDollRenderer {
                         offset2,
                         pose,
                         new Quaternionf(configRot).conjugate(),
-                        (int) posX, (int) posY,(float) size, null
+                        (int) posX, (int) posY,(float) size, (float) Math.toRadians(lightDegree),null
                 )
         );
     }
