@@ -22,7 +22,7 @@ package org.ayamemc.ayamepaperdoll.mixin.retexture;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractButton;
 import net.minecraft.resources.Identifier;
@@ -33,7 +33,7 @@ import org.spongepowered.asm.mixin.injection.At;
 @Mixin(AbstractButton.class)
 public abstract class AbstractButtonMixin {
     @WrapOperation(method = "extractDefaultSprite", at = {
-            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V")
+            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIIII)V")
     })
     public void drawTransparentTextFieldTexture(GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier location, int x, int y, int width, int height, int color, Operation<Void> original) {
         if (this instanceof Retextured retextured) {
@@ -41,6 +41,5 @@ public abstract class AbstractButtonMixin {
         } else {
             original.call(instance, renderPipeline, location, x, y, width, height, color);
         }
-
     }
 }

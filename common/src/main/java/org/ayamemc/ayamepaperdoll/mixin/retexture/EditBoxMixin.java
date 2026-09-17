@@ -22,7 +22,7 @@ package org.ayamemc.ayamepaperdoll.mixin.retexture;
 
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
+import com.mojang.renderpearl.api.pipeline.RenderPipeline;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.EditBox;
@@ -40,15 +40,11 @@ public abstract class EditBoxMixin extends AbstractWidget {
     }
 
     @WrapOperation(method = "extractWidgetRenderState", at = {
-            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/blaze3d/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V")
+            @At(value = "INVOKE", target = "Lnet/minecraft/client/gui/GuiGraphicsExtractor;blitSprite(Lcom/mojang/renderpearl/api/pipeline/RenderPipeline;Lnet/minecraft/resources/Identifier;IIII)V")
     })
     public void drawTransparentTextFieldTexture(GuiGraphicsExtractor instance, RenderPipeline renderPipeline, Identifier location, int x, int y, int width, int height, Operation<Void> original) {
         if (this instanceof Retextured retextured) {
             int color = ARGB.white(this.alpha);
-
-//            RenderSystem.enableBlend();
-//            RenderSystem.enableDepthTest();
-
             instance.blitSprite(renderPipeline, retextured.retexture(location), x, y, width, height, color);
         } else {
             original.call(instance, renderPipeline, location, x, y, width, height);

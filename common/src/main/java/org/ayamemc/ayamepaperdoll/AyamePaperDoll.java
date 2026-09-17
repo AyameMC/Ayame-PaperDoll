@@ -32,7 +32,6 @@ import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.config.Configs;
 import org.ayamemc.ayamepaperdoll.config.persistence.ConfigPersistence;
 import org.ayamemc.ayamepaperdoll.config.persistence.GsonConfigPersistence;
-import org.lwjgl.glfw.GLFW;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,12 +44,12 @@ public final class AyamePaperDoll {
     public static final KeyMapping.Category CATEGORY = KeyMapping.Category.register(path("keys"));
     public static final KeyMapping SHOW_PAPERDOLL_KEY = new KeyMapping(
             "key.%s.showPaperDoll".formatted(MOD_ID),
-            InputConstants.Type.KEYSYM,
-            GLFW.GLFW_KEY_F8,
+            InputConstants.Type.KEYBOARD,
+            InputConstants.KEY_F8,
             CATEGORY);
     public static final KeyMapping OPEN_CONFIG_GUI = new KeyMapping(
             "key.%s.openConfigGui".formatted(MOD_ID),
-            InputConstants.Type.KEYSYM,
+            InputConstants.Type.KEYBOARD,
             InputConstants.UNKNOWN.getValue(),
             CATEGORY);
     public static final Configs CONFIGS = new Configs();
