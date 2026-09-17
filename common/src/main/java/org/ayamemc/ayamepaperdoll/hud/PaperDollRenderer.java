@@ -302,7 +302,13 @@ public class PaperDollRenderer {
                         offset2,
                         pose,
                         new Quaternionf(configRot).conjugate(),
-                        (int) posX, (int) posY,(float) size, (float) Math.toRadians(lightDegree),null
+                        (int) posX,
+                        (int) posY,
+                        scaledWidth,
+                        scaledHeight,
+                        (float) size,
+                        (float) Math.toRadians(lightDegree),
+                        CONFIGS.mirrored.getValue()
                 )
         );
     }

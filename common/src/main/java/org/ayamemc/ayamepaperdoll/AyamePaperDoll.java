@@ -20,13 +20,7 @@
 
 package org.ayamemc.ayamepaperdoll;
 
-import com.mojang.blaze3d.pipeline.BlendFunction;
-import com.mojang.blaze3d.pipeline.ColorTargetState;
-import com.mojang.blaze3d.pipeline.RenderPipeline;
 import com.mojang.blaze3d.platform.InputConstants;
-import net.minecraft.client.renderer.BindGroupLayouts;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
-import com.mojang.blaze3d.PrimitiveTopology;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.resources.Identifier;
 import org.ayamemc.ayamepaperdoll.config.Configs;
@@ -54,21 +48,6 @@ public final class AyamePaperDoll {
             CATEGORY);
     public static final Configs CONFIGS = new Configs();
     public static final ConfigPersistence CONFIG_PERSISTENCE = new GsonConfigPersistence(Path.of("config/" + MOD_ID + "_v0.json"));
-
-    // mainly a copy of vanilla's RenderPipeline, see RenderPipelines.GUI_TEXTURED_SNIPPET
-    private static final RenderPipeline.Snippet GUI_TEXTURED_SNIPPET_NEW = RenderPipeline.builder()
-            .withBindGroupLayout(BindGroupLayouts.MATRICES_PROJECTION)
-            .withVertexShader(path("core/position_color_tex_lightmap"))
-            .withFragmentShader(path("core/position_color_tex_lightmap"))
-            .withBindGroupLayout(BindGroupLayouts.SAMPLER0_SAMPLER2)
-            .withColorTargetState(new ColorTargetState(BlendFunction.TRANSLUCENT_PREMULTIPLIED_ALPHA))
-            .withVertexBinding(0, DefaultVertexFormat.POSITION_COLOR_TEX_LIGHTMAP)
-            .withPrimitiveTopology(PrimitiveTopology.QUADS)
-            .buildSnippet();
-    // see RenderPipelines.GUI_TEXTURED_PREMULTIPLIED_ALPHA
-    public static final RenderPipeline MOD_PIPELINE = RenderPipeline.builder(GUI_TEXTURED_SNIPPET_NEW)
-            .withLocation(path("pipeline/mod_pipeline"))
-            .build();
 
     public static Identifier path(String path) {
         return Identifier.fromNamespaceAndPath(MOD_ID, path);

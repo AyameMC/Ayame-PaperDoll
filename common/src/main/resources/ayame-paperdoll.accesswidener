@@ -1,4 +1,5 @@
 accessWidener v2 official
+accessible field net/minecraft/client/renderer/GameRenderer useUiLightmap Z
 accessible field net/minecraft/world/entity/LivingEntity swimAmount F
 accessible field net/minecraft/world/entity/LivingEntity swimAmountO F
 accessible field net/minecraft/world/entity/Entity vehicle Lnet/minecraft/world/entity/Entity;
