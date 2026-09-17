@@ -1,6 +1,6 @@
 {
   "modmenu.descriptionTranslation.ayame_paperdoll": "Highly configurable PaperDoll mod.\nForked from Extra Player Renderer.",
-  "fml.menu.mods.info.description.ayame_paperdoll": "Highly configurable PaperDoll mod.\nForked from Extra Player Renderer.",
+  "neoforge.screen.mods.info.description.ayame_paperdoll": "Highly configurable PaperDoll mod.\nForked from Extra Player Renderer.",
   "config.ayame_paperdoll.on": "On",
   "config.ayame_paperdoll.off": "Off",
   "config.ayame_paperdoll.reset": "RESET",

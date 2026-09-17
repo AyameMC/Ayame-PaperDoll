@@ -100,7 +100,6 @@ public class ConfigScreen extends Screen {
                 AyamePaperDoll.LOGGER.error("Could not find widget for option {}", option.getId());
                 continue;
             }
-            //noinspection DataFlowIssue
             var label = new StringWidget(option.getName(), this.minecraft.font);
             label.setTooltip(Tooltip.create(option.getDescription()));
 

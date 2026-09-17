@@ -25,11 +25,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.inventory.InventoryScreen;
 import net.minecraft.client.player.LocalPlayer;
-import net.minecraft.client.renderer.entity.state.BoatRenderState;
+import net.minecraft.client.renderer.entity.state.*;
 import net.minecraft.util.LightCoordsUtil;
 import net.minecraft.client.renderer.entity.EntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRenderer;
-import net.minecraft.client.renderer.entity.state.EntityRenderState;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
@@ -57,8 +56,6 @@ public class PaperDollRenderer {
             new DataBackupEntry<>(Entity::isCrouching, (e, flag) -> {
                 if (e instanceof LocalPlayer player) player.crouching = flag;
             }),
-            new DataBackupEntry<>(e -> e.swimAmount, (e, pitch) -> e.swimAmount = pitch),
-            new DataBackupEntry<>(e -> e.swimAmountO, (e, pitch) -> e.swimAmountO = pitch),
             new DataBackupEntry<>(LivingEntity::isFallFlying, (e, flag) -> e.setSharedFlag(7, flag)),
             new DataBackupEntry<>(LivingEntity::getFallFlyingTicks, (e, ticks) -> e.fallFlyTicks = ticks),
 
@@ -69,13 +66,7 @@ public class PaperDollRenderer {
             new DataBackupEntry<>(e -> e.yHeadRotO, (e, yaw) -> e.yHeadRotO = yaw),
             new DataBackupEntry<>(e -> e.yHeadRot, (e, yaw) -> e.yHeadRot = yaw),
             new DataBackupEntry<>(e -> e.xRotO, (e, pitch) -> e.xRotO = pitch),
-            new DataBackupEntry<>(LivingEntity::getXRot, LivingEntity::setXRot),
-
-            new DataBackupEntry<>(e -> e.attackAnim, (e, prog) -> e.attackAnim = prog),
-            new DataBackupEntry<>(e -> e.oAttackAnim, (e, prog) -> e.oAttackAnim = prog),
-            new DataBackupEntry<>(e -> e.hurtTime, (e, time) -> e.hurtTime = time),
-            new DataBackupEntry<>(LivingEntity::getRemainingFireTicks, LivingEntity::setRemainingFireTicks),
-            new DataBackupEntry<>(e -> e.getSharedFlag(0), (e, flag) -> e.setSharedFlag(0, flag)) // on fire
+            new DataBackupEntry<>(LivingEntity::getXRot, LivingEntity::setXRot)
     );
     private static final PaperDollRenderer instance = new PaperDollRenderer();
     private final Minecraft minecraft = Minecraft.getInstance();
@@ -112,10 +103,6 @@ public class PaperDollRenderer {
 
     }
 
-    // 这会导致织布机渲染问题，不要使用↓
-    // follow convention in LayeredDrawer#renderInternal
-    // guiGraphics.pose().translate(0, 0, 200);
-
     /**
      * Mimics the code in {@link InventoryScreen#extractEntityInInventoryFollowsMouse}
      */
@@ -136,7 +123,9 @@ public class PaperDollRenderer {
         var backup = new DataBackup<>(targetEntity, LIVINGENTITY_BACKUP_ENTRIES);
         backup.save();
 
-        transformEntity(targetEntity, a, poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING);
+        boolean forceStanding = poseOffsetMethod == Configs.PoseOffsetMethod.FORCE_STANDING;
+
+        transformEntity(targetEntity, a, forceStanding);
 
         EntityRenderState vehicleRenderState = null;
         Vector3f vehicleOffset = null;
@@ -155,12 +144,12 @@ public class PaperDollRenderer {
                 transformEntity(livingVehicle, a, false);
             }
 
-            vehicleRenderState = extractRenderState(vehicle, a);
+            vehicleRenderState = extractRenderState(vehicle, a, false);
             vehicleOffset = vehicle.getPosition(a).subtract(targetEntity.getPosition(a))
                     .yRot((float) Math.toRadians(yawLerped+180)).toVector3f();// undo the rotation
         }
 
-        var targetRenderState = extractRenderState(targetEntity, a);
+        var targetRenderState = extractRenderState(targetEntity, a, forceStanding);
 
         extractPaperdoll(
                 graphics,
@@ -217,9 +206,6 @@ public class PaperDollRenderer {
             }
             targetEntity.vehicle = null;
 
-            targetEntity.swimAmount = 0;
-            targetEntity.swimAmountO = 0;
-
             targetEntity.setSharedFlag(7, false);
             targetEntity.fallFlyTicks = 0;
         }
@@ -229,7 +215,7 @@ public class PaperDollRenderer {
         final double headYaw = CONFIGS.headYaw.getValue(), headYawRange = CONFIGS.headYawRange.getValue();
         final double bodyYaw = CONFIGS.bodyYaw.getValue(), bodyYawRange = CONFIGS.bodyYawRange.getValue();
         final double pitch = CONFIGS.pitch.getValue(), pitchRange = CONFIGS.pitchRange.getValue();
-        final float headClamp = (float) Mth.clamp(headLerp, headYaw - headYawRange, headYaw + headYawRange);
+        final float headClamp = (float) Mth.clamp(Mth.wrapDegrees(headLerp), headYaw - headYawRange, headYaw + headYawRange);
         final float bodyLerp = Mth.lerp(partialTicks, targetEntity.yBodyRotO, targetEntity.yBodyRot);
         final float diff = headLerp - bodyLerp;
         final float bodyClamp = (float) Mth.clamp(Mth.wrapDegrees(headClamp - diff), bodyYaw - bodyYawRange, bodyYaw + bodyYawRange);
@@ -247,20 +233,6 @@ public class PaperDollRenderer {
 
         // 头部俯视角度
         targetEntity.setXRot(targetEntity.xRotO = pitchClamp);
-
-
-        if (!CONFIGS.swingHands.getValue()) {
-            targetEntity.attackAnim = 0;
-            targetEntity.oAttackAnim = 0;
-        }
-
-        if (!CONFIGS.hurtFlash.getValue()) {
-            targetEntity.hurtTime = 0;
-        }
-
-        targetEntity.setRemainingFireTicks(0);
-
-        targetEntity.setSharedFlag(0, false);
     }
 
     private void extractPaperdoll(GuiGraphicsExtractor graphics, EntityRenderState target, Vector3f offset,
@@ -279,7 +251,7 @@ public class PaperDollRenderer {
                 (float) Math.toRadians(CONFIGS.rotationY.getValue()),
                 (float) Math.toRadians(CONFIGS.rotationZ.getValue()));
 
-        pose.mul(configRot).rotateY((float) Math.toRadians(lightDegree + 180));
+        pose.mul(configRot).rotateY((float) Math.PI);
 
         var pose1 = new Quaternionf(pose);
         if(target instanceof BoatRenderState) {
@@ -302,19 +274,48 @@ public class PaperDollRenderer {
                         offset2,
                         pose,
                         new Quaternionf(configRot).conjugate(),
-                        (int) posX, (int) posY,(float) size, null
+                        (int) posX,
+                        (int) posY,
+                        scaledWidth,
+                        scaledHeight,
+                        (float) size,
+                        (float) Math.toRadians(lightDegree),
+                        CONFIGS.mirrored.getValue()
                 )
         );
     }
 
     //also check =InventoryScreen#extractRenderState
-    private EntityRenderState extractRenderState(Entity targetEntity, float a){
+    private EntityRenderState extractRenderState(Entity targetEntity, float a, boolean forceStanding){
         EntityRenderDispatcher entityRenderDispatcher = minecraft.getEntityRenderDispatcher();
         EntityRenderer<? super Entity, ?> entityRenderer = entityRenderDispatcher.getRenderer(targetEntity);
         EntityRenderState state = entityRenderer.createRenderState(targetEntity, a);
         state.lightCoords = getLight(targetEntity, a);
         state.shadowPieces.clear();
         state.outlineColor = 0;
+
+        // disable fire effect and text rendered on entity
+        state.scoreText = null;
+        state.nameTag = null;
+        state.displayFireAnimation = false;
+
+        if (state instanceof LivingEntityRenderState livingState) {
+            if (!CONFIGS.hurtFlash.getValue()) livingState.hasRedOverlay = false;
+        }
+
+        if (state instanceof ArmedEntityRenderState armedState) {
+            if (!CONFIGS.swingHands.getValue()) {
+                armedState.swingAnimation = 0;
+                armedState.currentSwing = null;
+            }
+        }
+
+        if (state instanceof HumanoidRenderState humanoidState) {
+            if (forceStanding) {
+                humanoidState.swimAmount = 0;
+            }
+        }
+
         return state;
     }
 }

@@ -20,12 +20,12 @@
 
 package org.ayamemc.ayamepaperdoll.config;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.network.chat.Component;
 import org.ayamemc.ayamepaperdoll.hud.PaperDollRenderer;
-import org.lwjgl.glfw.GLFW;
 
 import static org.ayamemc.ayamepaperdoll.AyamePaperDoll.CONFIGS;
 
@@ -75,7 +75,7 @@ public class VisualConfigEditorScreen extends Screen {
     @Override
     public boolean mouseDragged(MouseButtonEvent mouseButtonEvent, double deltaX, double deltaY) {
         boolean onDrag = false;
-        if (mouseButtonEvent.button() == GLFW.GLFW_MOUSE_BUTTON_LEFT) {
+        if (mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_LEFT) {
             final double newOffsetX = CONFIGS.offsetX.getValue() + (deltaX * 0.0015);
             final double newOffsetY = CONFIGS.offsetY.getValue() + (deltaY * 0.0015);
             if (newOffsetX < CONFIGS.offsetX.getMax() && newOffsetY > CONFIGS.offsetY.getMin()) {
@@ -86,7 +86,7 @@ public class VisualConfigEditorScreen extends Screen {
             }
             onDrag = true;
         }
-        if (mouseButtonEvent.button() == GLFW.GLFW_MOUSE_BUTTON_RIGHT) {
+        if (mouseButtonEvent.button() == InputConstants.MOUSE_BUTTON_RIGHT) {
             final double newRotationY = CONFIGS.rotationY.getValue() + deltaX;
             if (newRotationY < CONFIGS.rotationY.getMax() && newRotationY > CONFIGS.rotationY.getMin()) {
                 CONFIGS.rotationY.setValue(newRotationY);

@@ -39,7 +39,11 @@ public record ModRenderState(
         int y0,
         int x1,
         int y1,
+        int offsetX,
+        int offsetY,
         float scale,
+        float lightDegree,
+        boolean mirror,
         @Nullable ScreenRectangle scissorArea,
         @Nullable ScreenRectangle bounds
 ) implements PictureInPictureRenderState {
@@ -51,10 +55,13 @@ public record ModRenderState(
             @Nullable Vector3f translation2,
             Quaternionf rotation2,
             @Nullable Quaternionf overrideCameraAngle,
-            int x,
-            int y,
+            int offsetX,
+            int offsetY,
+            int width,
+            int height,
             float scale,
-            @Nullable ScreenRectangle scissorArea
+            float lightDegree,
+            boolean mirror
     ) {
         this(
                 renderState,
@@ -64,13 +71,12 @@ public record ModRenderState(
                 translation2,
                 rotation2,
                 overrideCameraAngle,
-                x,
-                y,
-                x,
-                y,
+                0, 0, width, height, offsetX, offsetY,
                 scale,
-                scissorArea,
-                PictureInPictureRenderState.getBounds(x, y, x, y, scissorArea)
+                lightDegree,
+                mirror,
+                null,
+                PictureInPictureRenderState.getBounds(0, 0, width, height, null)
         );
     }
 }
