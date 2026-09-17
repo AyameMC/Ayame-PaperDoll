@@ -21,7 +21,7 @@ pertaz
 LightgraycaAT
 '''
 description = '''${mod_description}'''
-logoFile = "icon.png"
+bannerFile = "icon.png"
 logoBlur = false
 updateJSONURL = "https://api.modrinth.com/updates/ayame-paperdoll/forge_updates.json?neoforge=only"
 [[dependencies.${ mod_id }]]

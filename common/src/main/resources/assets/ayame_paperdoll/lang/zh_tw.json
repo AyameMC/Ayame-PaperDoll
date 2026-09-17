@@ -1,6 +1,6 @@
 {
   "modmenu.descriptionTranslation.ayame_paperdoll": "高度可設定的紙娃娃模組。\n額外玩家渲染的分支。",
-  "fml.menu.mods.info.description.ayame_paperdoll": "高度可設定的紙娃娃模組。\n額外玩家渲染的分支。",
+  "neoforge.screen.mods.info.description.ayame_paperdoll": "高度可設定的紙娃娃模組。\n額外玩家渲染的分支。",
   "config.ayame_paperdoll.on": "開",
   "config.ayame_paperdoll.off": "關",
   "config.ayame_paperdoll.reset": "重置",
