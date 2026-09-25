@@ -107,11 +107,16 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
         posestack.translate(offsetX, renderState.offsetY(), 0.0F);
         float f = renderState.scale();
         posestack.scale(f, f, -f);
-        this.renderToTexture(renderState, posestack, this.submitNodeStorage);
 
+        // ImprovedTransparency should be temporarily set before renderToTexture() call
+        // since we want RenderTypes.waterMask() returning RenderTypes.WATER_MASK
         GameRenderer gameRenderer = Minecraft.getInstance().gameRenderer;
-        boolean temp = gameRenderer.useUiLightmap;
+        boolean useUiLightmap = gameRenderer.useUiLightmap;
+        boolean improvedTransparency = gameRenderer.gameRenderState().optionsRenderState.improvedTransparency;
         gameRenderer.useUiLightmap = false;
+        gameRenderer.gameRenderState().optionsRenderState.improvedTransparency = false;
+
+        this.renderToTexture(renderState, posestack, this.submitNodeStorage);
 
         try (
             FeatureRenderDispatcher.PreparedFrame frame = featureRenderDispatcher.prepareFrame(this.submitNodeStorage);
@@ -121,7 +126,8 @@ public class ModRenderer extends PictureInPictureRenderer<ModRenderState> {
             FeatureRenderDispatcher.renderAllFeatures(renderPass, frame);
         }
 
-        gameRenderer.useUiLightmap = temp;
+        gameRenderer.useUiLightmap = useUiLightmap;
+        gameRenderer.gameRenderState().optionsRenderState.improvedTransparency = improvedTransparency;
 
         modelViewStack.popMatrix();
         blitTexture(renderState, guiRenderState);
